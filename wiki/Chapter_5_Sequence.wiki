@@ -1,0 +1,6 @@
+#Start at Fri 14, Oct 2011
+<wiki:toc max_depth="3" />
+
+=什么是序列？=
+
+在Clojure中，任何逻辑是可看做数据项集合(collection of items)的数据结构都可以使用序列这样一种统一的方式来读取，写入和修改。在非常基础的层次上，序列被整合进了Clojure，同时也是目前为止最为方便和符合规范的处理集合的方式。他们的角色等同于列表(lists)在其他Lisp方言中的角色。但是，序列不仅仅是一个操作集合的API(a collection API)，他们通常还作为框架(framework)以方便Clojure程序中流程和逻辑的构件，同时，简单易用的设计也使他们作为递归和高阶函数应用程序的基础。
