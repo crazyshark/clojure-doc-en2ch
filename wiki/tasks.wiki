@@ -4,8 +4,8 @@
 
 任务分配情况: 共14章
 
- # chapter1:   jarod_chen   [jarod.py@gmail.com]
- # chapter2:   宋宇航  [oracle.abyss@gmail.com]
-
+ # chapter1:   jarod_chen   [ jarod.py@gmail.com ]
+ # chapter2:   宋宇航  [ oracle.abyss@gmail.com ]
+ # chapter3:   张浩  [ goooooogle.gg@gmail.com ]
 
 == 目标翻译项目 ==
