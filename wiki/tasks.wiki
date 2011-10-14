@@ -7,7 +7,7 @@
  # chapter1:   jarod_chen   [ jarod.py@gmail.com ]
  # chapter2:   宋宇航  [ oracle.abyss@gmail.com ]
  # chapter3:   张浩  [ goooooogle.gg@gmail.com ]
- # chapter4:
+ # chapter4:   魔力猫 [ wlmouse@gmail.com ]
  # chapter5:  谢轶 devilkirin@gmail.com
 
 == 目标翻译项目 ==
