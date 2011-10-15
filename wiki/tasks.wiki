@@ -14,5 +14,6 @@
  # chapter5:   谢轶 [ devilkirin@gmail.com ]
  # chapter6:   Rick's rock  [ wenjun.huang80@gmail.com ]
  # chapter7:   陆离   [ surgesoft@gmail.com ]
+ # chapter8:   李大双 网民f(x)  [ ldshuang@gmail.com ] 
 
 == 目标翻译项目 ==
