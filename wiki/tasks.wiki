@@ -10,5 +10,6 @@
  # chapter4:   魔力猫 [ wlmouse@gmail.com ]
  # chapter5:   谢轶 [ devilkirin@gmail.com ]
  # chapter6:   Rick's rock  [ wenjun.huang80@gmail.com ]
+ # chapter7:   陆离   [ surgesoft@gmail.com ]
 
 == 目标翻译项目 ==
