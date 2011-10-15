@@ -17,7 +17,7 @@
 || Character		|| 前缀一个反斜线  || \a                          ||	java.lang.Character          ||
 || Keyword		|| 前缀一个冒号	   || :key	                    ||  clojure.lang.Keyword       ||
 || List			|| 括号		   ||	'( 1 2 3 )                 ||                                         ||
-|| Vector			|| 方括号              ||	[ 1 2 3 ]                  ||                                         ||
+|| Vector			|| 方括号              ||	`[ 1 2 3 ]`                  ||                                         ||
 || Map			|| 花括号              ||	{:key val :key val}  ||	java.util.Map                    ||
 || Set			|| 花括号前缀井号 || #{ 1 2 3 }                  ||	java.util.Set                      ||
 
