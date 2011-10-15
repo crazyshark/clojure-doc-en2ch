@@ -1,8 +1,41 @@
 #summary One-sentence summary of this page.
 
-= Introduction =
+= CLojure的数据 =
 
-Add your content here.
+如何表示和处理数据
+
+	Clojure是一种动态类型语言，这意味着你在程序中永远不需要明确定义符号、函数、或者参数的数据类型。但是，所有的值仍然有一个类型。字符串时是字符串，数字是数字，列表时列表，等等。如果你尝试执行一个类型不支持的操作，将会在运行时产生错误。写代码时避免这种事情，是程序员的责任。对于有动态语言背景的人来说是很自然的事情，而
+那些只使用静态语言的人需要一些转变。
+	Clojure的类型既简单又复杂。Clojure的本身只有少量不同的类型，而且Clojure不是面向对象语言，它本身并不支创建新的用户自定义类型。一般来说，这让事情非常简单。但是，Clojure运行在Java虚拟机上，在内部每个Clojure的类型也表现为一个Java的类或接口。此外，如果你关联了一个Java库，你可能要注意Java类和类型。幸运的是，通常你只需要在Clojure中关联Java代码时关注它。
+	
+表4-1. Clojure的内置类型
+类型			描述			例子			内部Java类/接口
+Number			数字本身		16				java.lang.Number
+String			用双引号包围	"Hello!"			java.lang.String
+Boolean			true 或者 false	true				java.lang.Boolean
+Character			前缀一个反斜线	\a				java.lang.Character
+Keyword			前缀一个冒号	:key				clojure.lang.Keyword
+List				括号			'(1 2 3)
+Vector			方括号			[1 2 3]
+Map				花括号			{:key val :key val}	java.util.Map
+Set				花括号前缀井号	#{1 2 3}			java.util.Set
+
+Nil
+	保留符号nil在Clojure程序中有特殊的意义：它的意思是“空”或“空值”。	当nil用于布尔表达式计算和空判断时永远返回false，但是它不等于它自己。
+	它可用于任何数据类型，包括原语。但是，传递nil给大多数函数或操作将导致一个错误，因为它不是一个真正的值。
+	如果一个值有可能是nil，你就需要考虑代码中的这种特殊情况，以避免这个操作会产生一个java.lang.NullPointerException错误。
+	nil和Java中的Null是相同的。
+	
+基本类型
+	Clojure提供了一些基本类型来表示基本程序语言的类型结构，比如数字，字符串和布尔值。
+	
+Numbers
+	Clojure 对数值和数值计算有非常好的支持，数字常量能够用多种方式表示：
+	标准计数法的整形和浮点小数直接作为数字类型。例如，42或者3.14159。
+	Clojure还支持直接使用/符号输入比率常量。例如，5 / 8或3 / 4。用比率输入的常量将会自动简化。如果你输入4 / 2，将被简单的存储为2。
+	你能够以基数+r+值的形式输入任何整型常量。例如，2r10是二进制的2，16rFF是十六进制的255，你甚至可以输入像36r0Z这样的东西，这是35的36进制表示。语言支持2到36之间的所有基数。
+	Clojure还支持ava传统的十六进制和八进制表示法。数字前缀0x是十六进制表示：例如，0xFF是255。数字前缀0的都被为是八进制。
+	任何计算机上，对于十进制数都有两种表示法：浮点数和一个精确的十进制值。Clojure和Java一样，默认使用浮点数表示法，也不支持精确计算，内部使用Java的java.math.BigDecimal类。要指定一个常量内部使用恰当的精确形式，需要在数字后边添加一个M。例如，1.25M。与浮动点不同的是，这些数字将被四舍五入操作。这使得他们大多数的时候更加适用于货币。
 
 
 = Details =
