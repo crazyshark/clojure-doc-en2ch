@@ -10,16 +10,16 @@
 	
  表4-1. Clojure的内置类型
  
- ||  *类型*			|| *描述*              ||	*例子*             ||	*内部Java类/接口*  ||
- || Number		|| 数字本身           ||	16                  ||	java.lang.Number ||
- || String			|| 用双引号包围	   || "Hello!"             ||	java.lang.String ||
- || Boolean		|| true 或者 false  ||	true                ||       ava.lang.Boolean ||
- || Character		|| 前缀一个反斜线  || \a                    ||	java.lang.Character ||
- || Keyword		|| 前缀一个冒号	   || :key	              ||       clojure.lang.Keyword ||
- || List			|| 括号		   ||	'(1 2 3)           ||                                        ||
- || Vector			|| 方括号              ||	[1 2 3]           ||                                         ||
- || Map			|| 花括号              ||	{:key val :key val} ||	java.util.Map ||
- || Set			|| 花括号前缀井号 || #{1 2 3}        ||		java.util.Set ||
+ ||  *类型*			|| *描述*              ||	*例子*                   ||	*内部Java类/接口*             ||
+ || Number		|| 数字本身           ||	16                        ||	java.lang.Number             ||
+ || String			|| 用双引号包围	   || "Hello!"                   ||	java.lang.String                ||
+ || Boolean		|| true 或者 false  ||	true                      || ava.lang.Boolean              ||
+ || Character		|| 前缀一个反斜线  || \a                          ||	java.lang.Character          ||
+ || Keyword		|| 前缀一个冒号	   || :key	                    ||  clojure.lang.Keyword       ||
+ || List			|| 括号		   ||	'(1 2 3)                 ||                                         ||
+ || Vector			|| 方括号              ||	[1 2 3]                  ||                                         ||
+ || Map			|| 花括号              ||	{:key val :key val}  ||	java.util.Map                    ||
+ || Set			|| 花括号前缀井号 || #{1 2 3}                  ||	java.util.Set                      ||
 
 Nil
 	保留符号nil在Clojure程序中有特殊的意义：它的意思是“空”或“空值”。	当nil用于布尔表达式计算和空判断时永远返回false，但是它不等于它自己。
