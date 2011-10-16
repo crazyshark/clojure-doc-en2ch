@@ -12,6 +12,9 @@
 
 = C =
 
+= F =
+function 函数
+
 = I =
 
 implementation 实现 p1
