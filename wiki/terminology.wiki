@@ -33,6 +33,9 @@ Functional Programming 函数式编程
 
 implementation 实现 p1
 
+Imperative language 命令式语言(与函数式语言相对)
+
+
 
 = R =
 
