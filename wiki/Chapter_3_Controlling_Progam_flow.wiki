@@ -33,6 +33,6 @@ user=> (def my-mult (fn [x y] (* x y)))
 }}}
 现在你就可以在任何你有权限的上下文试用它了。
 {{{
-(my-mult 3 4)
+user=> (my-mult 3 4)
 12
 }}}
