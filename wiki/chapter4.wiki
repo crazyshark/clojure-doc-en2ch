@@ -266,3 +266,63 @@ Clojure仅提供了少量方便的字符串函数。对于更高级的字符串�
 打印与换行打印
 
 字符串打印函数 (print & println) 接受任意数量参数，打印到标准系统输出（如果不是字符串则转换成字符串）。println 在尾部追加一个换行符。两个函数都返回nil。
+
+正则表达式函数
+
+Clojure 提供了一些函数用于处理正则表达式，包装了Java正则表达式实现。
+
+re-pattern
+
+函数 (re-pattern) 接受一个字符串参数，返回一个正则表达式样式(java.util.regex.Pattern类的实例）。这个样式能用于正则表达式匹配。
+{{{
+(re-pattern " [a-zA-Z]*")
+-> #"[a-zA-Z]*"
+}}}
+
+也可以使用读取宏来直接用文本的方式输入正则表达式：在字符串前使用#符号。结果同样是样式，和用re-pattern函数生成的一样，例如，下面的表示方式和前面的例子是相同的：
+{{{
+#" [a-zA-Z]* "
+-> #"[a-zA-Z]*"
+}}}
+
+re-matches
+
+re-matches接受两个参数：一个正则表达式样式和一个字符串。返回任何和正则表达式样式匹配的字符串，如果没有匹配则返回nil。例如下面的代码：
+{{{
+(re-matches #"[a-zA-Z]* " "test")
+-> "test"
+(re-matches #"[a-zA-Z]* " "test123")
+-> nil
+}}}
+
+re-matcher
+
+re-matcher接受两个参数：一个正则表达式样式和一个字符串。返回一个有状态的"matcher"对象，提供给其它正则函数而不是直接提供样式。Matchers是java.util.regex.Matcher.类的实例。
+{{{
+(def my-matcher (re-matcher #" [a-zA-Z]* " "test")
+-> #'user/my-matcher
+}}}
+
+re-find
+
+re-find接受一个样式与一个字符串或者一个matcher。每次调用，返回matcher中下一个符合正则匹配的结果（如果还有）。
+{{{
+(re-find my-matcher)
+-> "test"
+(re-find my-matcher)
+-> ""
+(re-find my-matcher)
+-> nil
+}}}
+
+re-groups
+
+接受一个matcher，返回从接近的发现与匹配的集合。如果没有嵌套集合，则返回一个完全匹配的字符串。如果有嵌套集合，则返回vector集合，第一个元素是完全匹配的（非嵌套）。
+
+re-seq
+
+re-seq接受一个样式与一个字符串。它返回一个使用永久匹配（matcher）的lazy sequence(懒序列 见第5章)（这个sequence在一个连续的样式匹配的字符串中）。
+{{{
+(re-seq #" [a-z] " "test")
+-> ("t" "e” "s" "t")
+}}}
