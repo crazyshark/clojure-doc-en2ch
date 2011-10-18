@@ -1,6 +1,6 @@
 没有类的运行时多态
 
-以传统的对类和方法的观点来看Clojure不是一门面向对象的语言，虽然它构建在Java面向对象的基础设施之上。
-大多数主流的，像Java和C++这样的面向对象语言，用类定义树形的类层次结构，并提供这些类的方法的实现。
+以传统的对类和方法的观点来看Clojure不是一门面向对象的语言，虽然它构建在Java面向对象的基础设施之上。<br/>
+大多数主流的，像Java和C++这样的面向对象语言，用类定义树形的类层次结构，并提供这些类的方法的实现。<br/>
 Clojure分离类型层次结构和方法实现，极大地简化了多继承带来的问题。
-In addition, it permits you to define multiple, independent hierarchies over the same types. This makes it possible to define IS-A relationships that more closely model the real world.
+In addition, it permits you to define multiple, independent hierarchies over the same types. This makes it possible to define IS-A relationships that more closely model the real world.<br/>
