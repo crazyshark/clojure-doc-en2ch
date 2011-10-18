@@ -85,10 +85,10 @@ nil
 
 序列几乎可以从任何语言支持的collection类型上创建。
 
-* Clojure的持久化集合：Maps，sets， lists， 以及vectors都能作为序列很好地工作。
-* 字符串：所有字符串都是字符的序列。
-* Java数组：但是这可能会造成匹配不当，因为Java数组是可变的，而序列不会试着去避免复杂的故障（difficult bugs）。当你使用一个构建在数组之上的序列的时候，试着避免去修改这个数组
-* 任何实现了java.lang.Iterable接口的Java collection。同样的，相对于序列的不可变，Java collection是可变的，所以在使用的时候应当避免去修改collections。
-* 本地支持：序列也可以不需要任何其他collection类型的支持而直接构造。
+ * Clojure的持久化集合：Maps，sets， lists， 以及vectors都能作为序列很好地工作。
+ * 字符串：所有字符串都是字符的序列。
+ * Java数组：但是这可能会造成匹配不当，因为Java数组是可变的，而序列不会试着去避免复杂的故障（difficult bugs）。当你使用一个构建在数组之上的序列的时候，试着避免去修改这个数组
+ * 任何实现了java.lang.Iterable接口的Java collection。同样的，相对于序列的不可变，Java collection是可变的，所以在使用的时候应当避免去修改collections。
+ * 本地支持：序列也可以不需要任何其他collection类型的支持而直接构造。
 
 =解析序列=
