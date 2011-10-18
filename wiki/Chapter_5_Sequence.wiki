@@ -36,7 +36,8 @@ user=> (rest mylist)
 序列函数是非常有用的。举个例子，只需要`first`和`rest`（还需要另一个函数，`empty?`，如果一个序列为空则放回true）就能实现一个Lisp中极为常见的惯用语：递归遍历一个list的函数。但是，因为你使用的是序列，除了list，你可以遍历任何数据集合。
 
 <code language="clj">
-(defn printall [s]
+(defn printall `[s]`
+
     (if (not (empty? s))
         (do
             (println (str "Item: " (first s)))
