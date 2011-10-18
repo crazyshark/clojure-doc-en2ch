@@ -36,7 +36,15 @@ implementation 实现 p1
 Imperative language 命令式语言(与函数式语言相对)
 
 
+= O =
+
+parallel program 并发程序
 
 = R =
 
 recursion  (函数)迭代  p3
+
+
+= S =
+
+Side effects  副作用
