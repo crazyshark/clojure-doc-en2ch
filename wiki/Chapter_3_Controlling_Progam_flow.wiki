@@ -36,3 +36,14 @@ user=> (def my-mult (fn [x y] (* x y)))
 user=> (my-mult 3 4)
 12
 }}}
+而且，他的工作原理是公开的。表达式(fn [x y] (`*` x y))求出一个第一类对象函数，这个函数被绑定到my-mult上面。调用my-mult，你就可以用第一个元素“my-mult” 来执行函数求出一个list。“my-mult”当作这个新的函数，“3”和“4”被当作参数传入。
+
+注意，将function分配到symbol不是唯一使用它的方式，只要将这个function放到一个form的第一个元素位置，对这个form求值的时候function就会被执行，不管这个function是不是绑定到一个symbol或者其他的东西上。举个例子，这个例子证明将function的定义和使用在同一个form里面是完全可行的：
+{{{
+user=> ((fn [x y] (* x y)) 3 4) 
+12
+}}}
+在这个form里面，值得注意的是函数的定义(fn [x y] (`*` x y))放在form的第一个元素，
+求值时(fn [x y] (`*` x y))被解析为一个function，“3 4”被当成参数传递给它。跟调用一个绑定了function的symbol一样。
+总得来说跟js差不多。
+这里要强调提醒一下，function与它绑定到的那个symbol是不能画等号的，在前面的例子，my-mult等于(fn [x y] (`*` x y))，只能理解为 (fn [x y] (`*` x y)) 绑定到my-mult这个符号上面。当它被调用时，通过解析它获得一个function然后接着去调用这个function。
