@@ -222,3 +222,47 @@ Clojure 对数值和数值计算有非常好的支持，数字常量能够用多
 (number? "hello")
 -> false
 }}}
+
+字符串
+
+Clojure字符串和Java字符串相同，都是java.lang.String类的实例。它们作为文本输入，用双引号括起来。如果需要在字符串中写双引号字符，可以使用反斜杠字符进行转义，\.例如，下面这个有效的字符串：
+{{{
+"Most programmers write a \"Hello World\" program when they learn a new language"
+}}}
+在字符串中输入反斜杠字符，只需输入两个反斜杠。
+
+常用字符串函数
+
+Clojure仅提供了少量方便的字符串函数。对于更高级的字符串操作，你既可以使用Java字符串API（参见本章与Java的交互操作），也可以使用clojure.contrib用户库的str-utils命名空间定义的各种各样的字符串工具函数。
+
+连接
+
+字符串连接函数 (str) 接受任意数量的参数。如果参数不是字符串则将其转换为字符串，返回连接创建的新字符串。如果没有参数或为nil，则返回空字符串，""。
+{{{
+(str "I have " 5 " books.")
+-> "I have 5 books."
+}}}
+
+子串
+
+子字符串函数 (subs) 接受两个或三个参数, 第一个是字符串，第二个是一个整数偏移量，第三个（可选）是另一个整数偏移量。函数返回从第一个偏移量（含），到第二个（不含）偏移量或者结尾（如果没有第二个偏移量）截取的子字符串。
+{{{
+(subs "Hello World" 6)
+-> "World"
+(subs "Hello World" 0 5)
+-> "Hello"
+}}}
+
+字符串检查
+
+字符串检查函数 (string?) 接受一个参数，如果是字符串返回true，否则返回false。
+{{{
+(string? "test")
+-> true
+(string? 5)
+-> false
+}}}
+
+打印与换行打印
+
+字符串打印函数 (print & println) 接受任意数量参数，打印到标准系统输出（如果不是字符串则转换成字符串）。println 在尾部追加一个换行符。两个函数都返回nil。
