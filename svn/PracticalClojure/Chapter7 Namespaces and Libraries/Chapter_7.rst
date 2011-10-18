@@ -1,4 +1,4 @@
-﻿===============
+===============
 组织Clojure代码
 ===============
 
@@ -238,9 +238,9 @@ user=> (new Date)
 
 (import '(java.util.regex Pattern Matcher))
 
-作为一个特例，nested Java类（有时被称为内部类）必须使用它们的二进制类名，就像JVM使用的那样。内部类的二进制类名由外部类名组成，之后跟着内部类名。例如，类Wheel的内部类Truck的二进制名是Truck$Wheel。
+作为一个特例，Java中的嵌套类（有时被称为内部类）必须使用它们的二进制类名，就像JVM使用的那样。内部类的二进制类名由外部类名组成，之后跟着内部类名。例如，类Wheel的内部类Truck的二进制名是Truck$Wheel。
 
-在Clojure中，一个nested java类除了它的enclosing类之外不能被命名。例如，要导入一个nested java类javax.swing.Box.filler，你必须这样做：
+在Clojure中，一个java的嵌套类除了它的包含类之外不能被命名。例如，要导入一个 java的嵌套类javax.swing.Box.filler，你必须这样做：
 
 (import '(javax.swing Box$Filler))
 
