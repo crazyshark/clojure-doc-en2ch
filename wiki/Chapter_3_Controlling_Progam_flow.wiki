@@ -76,3 +76,22 @@ nil
 ----
 * tip *:* doc * 函数在编程的时候是非常有用的，Clojure所有的内置函数都有很好的文档（包括所有的类库），而且在* REPL *上使用* doc *函数也是相当方便的。同样，在你自己编写函数的时候也要养成给函数添加文档的习惯，及时没有其他人回来看你的代码，因为在一两周之后它对你自己的记忆也是有很大帮助的，让你正确的记得你当时定义这个函数是做什么的。
 ----
+===多元函数===
+元数是指函数的参数可以有多少组的组数，（类似与java的方法重载，调用方法时通过传递给它们的不同参数个数和参数类型来决定具体使用哪个方法，多态性。）在Clojure中也可以基于元数来定义多个预备的实现。
+这里同样使用* fn *和* defn *来定义函数，只是在参数上面有一些轻微的修改。之前是传递一个参数的vector和一个函数体的表达式（expression），现在要传递多个vector/expression对用圆括号括起来。下面代码比较好解释：
+{{{
+user=> (defn square-or-multiply 
+         "squares a single argument, multiplies two arguments" 
+        ([] 0) 
+        ([x] (* x x)) 
+        ([x y] (* x y))) 
+}}}
+这里定义的函数square-or-multiply有三个预定的实现。第一个的参数是一个空的vector，不传参数时被调用，返回常量0.第二个实现带了一个参数，返回该参数的平方值。第三个实现有两个参数，返回值为这两个参数的乘积。在REPL中验证：
+{{{
+user=> (square-or-multiply) 
+0 
+user=>(square-or-multiply 5) 
+25 
+user=>(square-or-multiply 5 2) 
+10 
+}}}
