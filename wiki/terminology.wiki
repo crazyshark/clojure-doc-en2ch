@@ -23,6 +23,7 @@ implementation 实现                 p1
 
 
 = C =
+Closures 闭包 p46
 
 = F =
 function 函数
@@ -49,5 +50,5 @@ recursion  (函数)迭代  p3
 
 Side effects  副作用
 = T =
-
-Tail Recursion 尾递归
+ 
+Tail Recursion 尾递归 p39
