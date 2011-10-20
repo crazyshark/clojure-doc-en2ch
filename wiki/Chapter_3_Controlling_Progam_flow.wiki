@@ -95,3 +95,23 @@ user=>(square-or-multiply 5)
 user=>(square-or-multiply 5 2) 
 10 
 }}}
+===可变参数函数===
+经常需要一些函数的参数个数是不定的，被叫做可变参函数（variable arity）。Clojure满足了这个要求，通过定义函数时使用特殊符号`&` 放在参数vector里面实现。* fn *和* defn *都可以使用。
+使用：定义参数vector时，只需将`&` 再加上一个符号名放在普通参数后面即可。函数调用时任何附加的参数都会被装在一个序列（seq，类似于list）的结构传递进去。然后这个序列将被绑定在参数列表`&`后面的那个符号上面。用下面的代码举个例子：
+{{{
+user=> (defn add-arg-count 
+         "Returns the first argument + the number of additional arguments" 
+        [first & more] 
+        (+ first (count more))) 
+}}}
+* count *是一个简单的内置函数，它返回一个list的长度。查看运行结果：
+{{{
+user=> (add-arg-count 5) 
+5 
+user=> (add-arg-count 5 5) 
+6 
+user=> (add-arg-count 5 5 5 5 5 5) 
+10 
+}}}
+第一次的调用，只有一个参数5，它被绑定到* first *上面而且有个空的list绑定到* more *上，因为没有附加的参数，'(count more)' 返回0。所以返回值也为第一个参数的值。然而，第二、三次调用时* more *分别绑定到了'(5)'和'(5 5 5 5 5)'上，长度分别为1和5，再加上第一个参数5并返回和。
+第四章讨论了list以及一些通用函数来解析和求出他们的值。他们都能对绑定了list的* more *使用。
