@@ -1,3 +1,7 @@
+<style>
+.code { border: 1px doted }
+</style>
+
 <h1>章九 Multimechods(多重分派、多元法)和层次结构</h1>
 <h2>没有类的运行时多态</h2>
 <p>
