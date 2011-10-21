@@ -19,6 +19,61 @@ Clojure 多路方法更为灵活。它支持多重分派，任何变量都能把
 </code>
 </p>
 
+
+<code>
+(def a {:name "Arthur", :species ::human, :strength 8})
+(def b {:name "Balfor", :species ::elf, :strength 7})
+(def c {:name "Calis", :species ::elf, :strength 5})
+(def d {:name "Drung", :species ::orc, :strength 6})
+</code>
+
+
+<code>
+(defmulti move :species)
+
+(defmethod move ::elf [creature]
+    (str (:name creature) " runs swiftly."))
+
+(defmethod move ::human [creature]
+    (str (:name creature) " walks steadily."))
+
+(defmethod move ::orc [creature]
+    (str (:name creature) " stomps heavily."))
+</code>
+
+
+<code>
+user=> (move a)
+"Arthur walks steadily."
+user=> (move b)
+"Balfor runs swiftly."
+user=> (move c)
+"Calis runs swiftly."
+</code>
+
+
+<code>
+(defmulti attack (fn [creature]
+                    (if (> (:strength creature) 5)
+                        :strong
+                        :weak)))
+
+(defmethod attack :strong [creature]
+    (str (:name creature) " attacks mightily."))
+
+(defmethod attack :weak [creature]
+    (str (:name creature) " attacks feebly."))
+</code>
+
+
+<code>
+user=> (attack c)
+"Calis attacks feebly."
+user=> (attack d)
+"Drung attacks mightily."
+</code>
+
+
 ====多重分派====
 
 ====默认分派值====
