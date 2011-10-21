@@ -41,7 +41,7 @@ Clojure 多路方法更为灵活。它支持多重分派，任何变量都能把
     (str (:name creature) " stomps heavily."))
 </code>
 
-
+当你调用***move***的时候，适当的方法会被调用。
 <code>
 user=> (move a)
 "Arthur walks steadily."
@@ -65,7 +65,7 @@ user=> (move c)
     (str (:name creature) " attacks feebly."))
 </code>
 
-
+当你调用***attack***多路方法的时候，会首先调用匿名方法fn，它返回***:strong***或者***:weak***。这个关键词（分发值）决定了哪个attack方法被掉用。
 <code>
 user=> (attack c)
 "Calis attacks feebly."
@@ -74,7 +74,7 @@ user=> (attack d)
 </code>
 
 
-====多重分派====
+====多重分发====
 
 ====默认分派值====
 
