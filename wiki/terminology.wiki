@@ -25,6 +25,9 @@ implementation 实现                 p1
 = C =
 Closures 闭包 p46
 
+= D =
+dispach 分发
+
 = F =
 function 函数
 
@@ -36,6 +39,8 @@ implementation 实现 p1
 
 Imperative language 命令式语言(与函数式语言相对)
 
+= M =
+multimethods 多路方法
 
 = O =
 
