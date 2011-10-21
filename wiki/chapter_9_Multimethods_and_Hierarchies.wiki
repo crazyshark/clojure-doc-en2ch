@@ -79,7 +79,7 @@ user=> (attack d)
 
 <code>
 (defmulti encounter (fn `[x y`]
-                        [(:species x) (:species y)]))
+                        `[(:species x) (:species y)`]))
 (defmethod encounter `[::elf ::orc`] `[elf orc`]
     (str "Brave elf " (:name elf)
         " attacks evil orc " (:name orc)))
