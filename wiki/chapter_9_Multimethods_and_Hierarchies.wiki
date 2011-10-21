@@ -105,7 +105,7 @@ user=> (encounter d b)
 
 <code>
 user=> (encounter a c)
-java.lang.IllegalArgumentException`:
+java.lang.IllegalArgumentException:
 No method in multimethod 'encounter'
 for dispatch value: `[:user/human :user/elf`]
 </code>
@@ -298,7 +298,7 @@ user=> (slay d) ;; orc
 
 <code>
 user=> (slay b)
-java.lang.IllegalArgumentException`:
+java.lang.IllegalArgumentException:
 Multiple methods in multimethod 'slay' match
 dispatch value: :user/elf -> :user/magical
 and :user/good, and neither is preferred
