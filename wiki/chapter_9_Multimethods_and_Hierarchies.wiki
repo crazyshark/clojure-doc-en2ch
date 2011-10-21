@@ -12,7 +12,7 @@ Clojure Multimechods为运行时多态的调度提供了支持。它允许你给
 Clojure Multimechods更为灵活。它支持多重分派，任何变量都能把实现挂到同一个方法上。同样地，调度将基于变量的任何特征，而不单单是类型。<br/>
 及多方法使用关键字defmulti创建，使用defmethod实现。
 <code>
-(defmulti name dispatch-fn)<br/>
+(defmulti name dispatch-fn)
 (defmethod multifn dispatch-value [[args...]] & body)
 </code>
 </p>
