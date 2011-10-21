@@ -30,11 +30,14 @@ Clojure 多路方法更为灵活。它支持多重分派，任何变量都能把
 
 <code>
 (defmulti move :species)
-(defmethod move ::elf `[creature`]
+
+ (defmethod move ::elf `[creature`]
     (str (:name creature) " runs swiftly."))
-(defmethod move ::human `[creature`]
+
+ (defmethod move ::human `[creature`]
     (str (:name creature) " walks steadily."))
-(defmethod move ::orc `[creature`]
+
+ (defmethod move ::orc `[creature`]
     (str (:name creature) " stomps heavily."))
 </code>
 
@@ -54,9 +57,11 @@ user=> (move c)
                     (if (> (:strength creature) 5)
                         :strong
                         :weak)))
-(defmethod attack :strong `[creature`]
+
+ (defmethod attack :strong `[creature`]
     (str (:name creature) " attacks mightily."))
-(defmethod attack :weak `[creature`]
+
+ (defmethod attack :weak `[creature`]
     (str (:name creature) " attacks feebly."))
 </code>
 
