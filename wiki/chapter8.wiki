@@ -2,8 +2,19 @@
 
 = 在代码中描述你的数据=
 
-Add your content here.
+程序员经常谈论metadata,或数据的数据。
 
+= 读写metadataReading and Writing Metadata=
+
+=metadata保存操作(Metadata-Preserving Operations)=
+
+=(Read-Time Metadata)=
+
+=变量里的metadata=
+
+=引用类型里的metadata= 
+
+=总结=
 
 = Details =
 
