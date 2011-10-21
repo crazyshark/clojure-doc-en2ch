@@ -6,7 +6,7 @@
 在代码中描述你的数据
 =========================
 
-程序员经常谈论metadata,即数据的数据。metadata在不同的上下文环境中定义是不一样的。clojure提供机制metadata
+程序员经常谈论metadata,即数据的数据。metadata在不同的上下文环境中定义是不一样的。clojure提供一些机制metadata
     
 两个具有相同值和不同元数据(metadata)的对象被认为是相等的（具有相同的hash值）。但是，元数据(metadata)和其他clojure 
 的数据结构一样，具有不变的数据类型(immutable semantics)。当改变对象的元数据(metadata)会生成一个新的对象，新生成的
