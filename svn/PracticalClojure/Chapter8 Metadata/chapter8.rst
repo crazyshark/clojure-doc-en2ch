@@ -1,20 +1,36 @@
-# metadata 
+==============
+metadata 
+==============
 
-= 鍦ㄤ唬鐮佷腑鎻忚堪浣犵殑鏁版嵁=
 
-绋嬪簭鍛樼粡甯歌皥璁簃etadata,鍗虫暟鎹殑鏁版嵁銆俶etadata鍦ㄤ笉鍚岀殑涓婁笅鏂囩幆澧冧腑瀹氫箟鏄笉涓�鏍风殑銆俢lojure鎻愪緵鏈哄埗metadata
+在代码中描述你的数据
+=========================
 
-= 璇诲啓metadataReading and Writing Metadata=
+程序员经常谈论metadata,即数据的数据。metadata在不同的上下文环境中定义是不一样的。clojure提供机制metadata
 
-=metadata淇濆瓨鎿嶄綔(Metadata-Preserving Operations)=
+读写metadata(Reading and Writing Metadata)
+==================================================
+ 
+默认环境中，REPL是不会打印了metadata的。需要将*\*print-meta\**设置成true，为后边示例:: 
+	
+	(set! \*print-meta\* true)
 
-=(Read-Time Metadata)=
 
-=鍙橀噺閲岀殑metadata=
+metadata保存操作(Metadata-Preserving Operations)
+==================================================
 
-=寮曠敤绫诲瀷閲岀殑metadata= 
+(Read-Time Metadata)
+==================================================
 
-=鎬荤粨=
+变量里的metadata
+==================================================
+
+引用类型里的metadata
+==================================================
+
+总结
+===================================================
+
 
 = Details =
 
