@@ -164,7 +164,7 @@ user=> (cast-spell a)
     (str (:name x) " and " (:name y)
         " ignore one another."))
 
-user=> (encounter c a)
+ user=> (encounter c a)
 "Calis and Arthur say hello."
 user=> (encounter a d)
 "Arthur is attacked by Drung"
