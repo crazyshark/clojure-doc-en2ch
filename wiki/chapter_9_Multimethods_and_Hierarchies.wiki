@@ -15,6 +15,6 @@ Clojure Multimechods更为灵活。它支持多重分派，任何变量都能把
 及多方法使用关键字defmulti创建，使用defmethod实现。
 <code>
 (defmulti name dispatch-fn)
-(defmethod multifn dispatch-value [[[]]args...[[]]] & body)
+(defmethod multifn dispatch-value [[args...]] & body)
 </code>
 </p>
