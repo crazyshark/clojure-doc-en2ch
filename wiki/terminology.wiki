@@ -40,7 +40,7 @@ implementation 实现 p1
 Imperative language 命令式语言(与函数式语言相对)
 
 = M =
-multimethods 多路方法
+multimethods 多路方法，同 多重分派、多元法
 
 = O =
 
