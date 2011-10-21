@@ -65,7 +65,7 @@ user=> (move c)
     (str (:name creature) " attacks feebly."))
 </code>
 
-当你调用***attack***多路方法的时候，会首先调用匿名方法fn，它返回***:strong***或者***:weak***。这个关键词（分发值）决定了哪个attack方法被掉用。
+当你调用***attack***多路方法的时候，会先调用匿名方法fn，它返回***:strong***或者***:weak***。这个关键词（分发值）决定了哪个attack方法被掉用。
 <code>
 user=> (attack c)
 "Calis attacks feebly."
