@@ -13,6 +13,6 @@ Clojure及多方法更为灵活。它支持多重分派，任何变量都能把�
 及多方法使用关键字defmulti创建，使用defmethod实现。
 <div class="code">
 (defmulti name dispatch-fn)<br/>
-(defmethod multifn dispatch-value [args...] &amp; body)
+(defmethod multifn dispatch-value [args...] & body)
 </div>
 </p>
