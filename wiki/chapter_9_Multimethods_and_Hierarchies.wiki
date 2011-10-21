@@ -202,7 +202,7 @@ user=> (cast-spell a)
 
 <code>
 (defmulti encounter (fn `[x y`]
-                        [(:species x) (:species y)]))
+                        `[(:species x) (:species y)`]))
 
  (defmethod encounter `[::good ::good`] `[x y`]
     (str (:name x) " and " (:name y) " say hello."))
