@@ -134,10 +134,10 @@ true
 <code>
 (defmulti cast-spell :species)
 
- (defmethod cast-spell ::magical [creature]
+ (defmethod cast-spell ::magical `[creature`]
     (str (:name creature) " casts a spell."))
 
- (defmethod cast-spell :default [creature]
+ (defmethod cast-spell :default `[creature`]
     (str "No, " (:name creature) " is not magical!"))
 
  user=> (cast-spell c)
@@ -148,19 +148,19 @@ user=> (cast-spell a)
 
 
 <code>
-(defmulti encounter (fn [x y]
+(defmulti encounter (fn `[x y`]
                         [(:species x) (:species y)]))
 
- (defmethod encounter [::good ::good] [x y]
+ (defmethod encounter `[::good ::good`] `[x y`]
     (str (:name x) " and " (:name y) " say hello."))
 
- (defmethod encounter [::good ::evil] [x y]
+ (defmethod encounter `[::good ::evil`] `[x y`]
     (str (:name x) " is attacked by " (:name y)))
 
- (defmethod encounter [::evil ::good] [x y]
+ (defmethod encounter `[::evil ::good`] `[x y`]
     (str (:name x) " attacks " (:name y)))
 
- (defmethod encounter :default [x y]
+ (defmethod encounter :default `[x y`]
     (str (:name x) " and " (:name y)
         " ignore one another."))
 
@@ -188,9 +188,9 @@ true
 
 <code>
 (defmulti invert class)
-(defmethod invert Number [x]
+(defmethod invert Number `[x`]
     (- x))
-(defmethod invert String [x]
+(defmethod invert String `[x`]
     (apply str (reverse x)))
 user=> (invert 3.14)
 -3.14
@@ -227,10 +227,10 @@ user=> (parents java.util.Date)
 <code>
 (defmulti slay :species)
 
- (defmethod slay ::good [creature]
+ (defmethod slay ::good `[creature`]
     (str "Oh no! A good creature was slain!"))
 
- (defmethod slay ::magical [creature]
+ (defmethod slay ::magical `[creature`]
     (str "A magical creature was slain!"))
 </code>
 
@@ -299,16 +299,16 @@ clojure.lang.PersistentArrayMap
 <code>
 (defmulti move type)
 
- (defmethod move ::elf [creature]
+ (defmethod move ::elf `[creature`]
     (str (:name creature) " runs swiftly."))
 
- (defmethod move ::human [creature]
+ (defmethod move ::human `[creature`]
     (str (:name creature) " walks steadily."))
 </code>
 
 
 <code>
-(defmethod move Number [n]
+(defmethod move Number `[n`]
     (str "What?! Numbers don't move!"))
 
  user=> (move a)
