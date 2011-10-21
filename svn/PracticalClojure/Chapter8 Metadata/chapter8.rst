@@ -142,9 +142,6 @@ metadata保存操作(Metadata-Preserving Operations)
 
 
 总结
-
-
-
 ===================================================
 
 元数据(metadata)是种与种不同的特性。
