@@ -76,8 +76,61 @@ user=> (attack d)
 
 ====多重分发====
 
+
+<code>
+(defmulti encounter (fn `[x y`]
+                        [(:species x) (:species y)]))
+(defmethod encounter `[::elf ::orc`] `[elf orc`]
+    (str "Brave elf " (:name elf)
+        " attacks evil orc " (:name orc)))
+(defmethod encounter `[::orc ::elf`] `[orc elf`]
+    (str "Evil orc " (:name orc)
+        " attacks innocent elf " (:name elf)))
+(defmethod encounter `[::elf ::elf`] `[orc1 orc2`]
+    (str "Two elves, " (:name orc1)
+        " and " (:name orc2)
+        ", greet each other."))
+</code>
+
+
+<code>
+user=> (encounter b c)
+"Two elves, Balfor and Calis, greet each other."
+user=> (encounter d b)
+"Evil orc Drung attacks innocent elf Balfor"
+</code>
+
 ====默认分派值====
 
+
+<code>
+user=> (encounter a c)
+java.lang.IllegalArgumentException:
+No method in multimethod 'encounter'
+for dispatch value: `[:user/human :user/elf`]
+</code>
+
+
+<code>
+(defmethod encounter :default [x y]
+    (str (:name x) " and " (:name y)
+        " ignore each other."))
+</code>
+
+
+<code>
+user=> (encounter a c)
+"Arthur and Calis ignore each other."
+</code>
+
+
+<code>
+(defmulti talk :species :default "other")
+(defmethod talk ::orc `[creature`]
+    (str (:name creature) " grunts."))
+(defmethod talk "other" `[creature`]
+    (str (:name creature) " speaks."))
+</code>
 
 ===层次结构===
 
