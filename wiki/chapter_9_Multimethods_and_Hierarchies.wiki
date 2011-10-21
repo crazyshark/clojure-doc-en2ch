@@ -81,22 +81,273 @@ user=> (attack d)
 
 ===层次结构===
 
+<code>
+(derive child parent)
+</code>
+
+
+<code>
+user=> (derive ::human ::good)
+user=> (derive ::elf ::good)
+user=> (derive ::orc ::evil)
+</code>
+
+
+<code>
+user=> (derive ::elf ::magical)
+user=> (derive ::orc ::magical)
+</code>
+
+
+<code>
+user=> (derive ::hero ::human)
+</code>
+
+***img here***
+
 ====查询层次结构====
 
 
-===Multimethods的层次结构===
+<code>
+(isa? child parent)
+</code>
+
+
+<code>
+user=> (isa? ::orc ::good)
+false
+user=> (isa? ::hero ::good)
+true
+user=> (isa? ::hero ::magical)
+false
+</code>
+
+
+<code>
+user=> (isa? ::human ::human)
+true
+</code>
+
+
+===多路方法的层次结构===
+
+<code>
+(defmulti cast-spell :species)
+
+ (defmethod cast-spell ::magical [creature]
+    (str (:name creature) " casts a spell."))
+
+ (defmethod cast-spell :default [creature]
+    (str "No, " (:name creature) " is not magical!"))
+
+ user=> (cast-spell c)
+"Calis casts a spell."
+user=> (cast-spell a)
+"No, Arthur is not magical!"
+</code>
+
+
+<code>
+(defmulti encounter (fn [x y]
+                        [(:species x) (:species y)]))
+
+ (defmethod encounter [::good ::good] [x y]
+    (str (:name x) " and " (:name y) " say hello."))
+
+ (defmethod encounter [::good ::evil] [x y]
+    (str (:name x) " is attacked by " (:name y)))
+
+ (defmethod encounter [::evil ::good] [x y]
+    (str (:name x) " attacks " (:name y)))
+
+ (defmethod encounter :default [x y]
+    (str (:name x) " and " (:name y)
+        " ignore one another."))
+
+user=> (encounter c a)
+"Calis and Arthur say hello."
+user=> (encounter a d)
+"Arthur is attacked by Drung"
+</code>
 
 ====Java的层次结构====
 
+
+<code>
+user=> (derive java.util.Date ::evil)
+</code>
+
+
+<code>
+user=> (isa? java.util.Date ::evil)
+true
+user=> (isa? Float Number)
+true
+</code>
+
+
+<code>
+(defmulti invert class)
+(defmethod invert Number [x]
+    (- x))
+(defmethod invert String [x]
+    (apply str (reverse x)))
+user=> (invert 3.14)
+-3.14
+user=> (invert
+</code>
+
 ====更多的层次结构查询====
 
+<code>
+(parents tag)
+(ancestors tag)
+(descendants tag)
+</code>
+
+
+<code>
+user=> (parents ::orc)
+#{:user/magical :user/evil}
+user=> (descendants ::good)
+#{:user/elf :user/hero :user/human}
+user=> (parents ::hero)
+#{:user/human}
+user=> (ancestors ::hero)
+#{:user/good :user/human}
+user=> (parents java.util.Date)
+#{java.lang.Object java.lang.Cloneable
+    java.io.Serializable java.lang.Comparable
+    :user/evil}
+</code>
+
 ====解决冲突====
+
+
+<code>
+(defmulti slay :species)
+
+ (defmethod slay ::good [creature]
+    (str "Oh no! A good creature was slain!"))
+
+ (defmethod slay ::magical [creature]
+    (str "A magical creature was slain!"))
+</code>
+
+
+<code>
+user=> (slay a) ;; human
+"Oh no! A good creature was slain!"
+user=> (slay d) ;; orc
+"A magical creature was slain!"
+</code>
+
+
+<code>
+user=> (slay b)
+java.lang.IllegalArgumentException:
+Multiple methods in multimethod 'slay' match
+dispatch value: :user/elf -> :user/magical
+and :user/good, and neither is preferred
+</code>
+
+
+<code>
+(prefer-method multimethod preferred-value other-value)
+</code>
+
+
+<code>
+user=> (prefer-method slay ::good ::magical)
+user=> (slay b)
+"Oh no! A good creature was slain!"
+</code>
+
+
+<code>
+(remove-method multimethod dispatch-value)
+</code>
+
+
+<code>
+user=> (remove-method slay ::magical)
+user=> (slay b)
+"Oh no! A good creature was slain!"
+</code>
 
 ====类型标记====
 
 
+<code>
+user=> (type (with-meta {:name "Bob"} {:type ::person}))
+:user/person
+user=> (type 42)
+java.lang.Integer
+user=> (type {:name "Alice"})
+clojure.lang.PersistentArrayMap
+</code>
+
+
+<code>
+(def a (with-meta {:name "Arthur", :strength 8}
+        {:type ::human}))
+(def b (with-meta {:name "Balfor", :strength 7}
+        {:type ::elf}))
+</code>
+
+
+<code>
+(defmulti move type)
+
+ (defmethod move ::elf [creature]
+    (str (:name creature) " runs swiftly."))
+
+ (defmethod move ::human [creature]
+    (str (:name creature) " walks steadily."))
+</code>
+
+
+<code>
+(defmethod move Number [n]
+    (str "What?! Numbers don't move!"))
+
+ user=> (move a)
+"Arthur walks steadily."
+user=> (move b)
+"Balfor runs swiftly."
+user=> (move 6.022)
+"What?! Numbers don't move!"
+</code>
+
 ===用户定义的层次结构===
 
+
+<code>
+user=> (def h (make-hierarchy))
+user=> (derive h :child :parent)
+user=> (isa? h :child :parent)
+false
+</code>
+
+
+<code>
+user=> (def h (-> (make-hierarchy)
+                (derive :one :base)
+                (derive :two :base)
+                (derive :three :two)))
+user=> (isa? h :three :base)
+true
+</code>
+
+
+<code>
+user=> (def h (make-hierarchy))
+user=> (isa? h :child :parent)
+false
+user=> (alter-var-root (var h) derive :child :parent)
+user=> (isa? h :child :parent)
+true
+</code>
 
 ===总结===
 <p>
