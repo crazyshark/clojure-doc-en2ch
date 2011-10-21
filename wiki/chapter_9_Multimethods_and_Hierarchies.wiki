@@ -9,10 +9,10 @@ Clojure分离了类型层次结构和方法实现，极大地简化了多重继�
 <p>
 Clojure及多方法为运行时多态的调度提供了支持。它允许你给一个方法定义提供多个实现。在运行时，哪个实现被执行取决于方法被赋予的参数。<br/>
 很多面向对象语言的方法调度，是单变量的、基于类型的，哪个方法被执行，完全由第一个参数所属的类型或类来决定。方法在第一个参数上被调用。Java和C++都把第一个参数放到方法名前面来明确它的重要意义。<br/>
-Clojure及多方法更为灵活。它支持多重分派，任何变量都能把实现挂到同一个方法上。同样地，调度将基于变量的任何特征，而不单单是类型<br/>
+Clojure及多方法更为灵活。它支持多重分派，任何变量都能把实现挂到同一个方法上。同样地，调度将基于变量的任何特征，而不单单是类型。<br/>
 及多方法使用关键字defmulti创建，使用defmethod实现。
 <div class="code">
-(defmulti name dispatch-fn)
-(defmethod multifn dispatch-value [args...] & body)
+(defmulti name dispatch-fn)<br/>
+(defmethod multifn dispatch-value [args...] &amp; body)
 </div>
 </p>
