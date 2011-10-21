@@ -112,7 +112,7 @@ for dispatch value: `[:user/human :user/elf`]
 
 
 <code>
-(defmethod encounter :default [x y]
+(defmethod encounter :default `[x y`]
     (str (:name x) " and " (:name y)
         " ignore each other."))
 </code>
