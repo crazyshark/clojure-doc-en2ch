@@ -19,4 +19,5 @@
  # chapter10: 倪翔 [ heroin.nee@gmail.com ]
  # chapter11:  巫云[ wizzardcloud@gmail.com ]
  # chapter12: 宋宇航  [ oracle.abyss@gmail.com ]
+ # chapter13: 暮色 [ roysong.iv@gmail.com ]
 == 目标翻译项目 ==
