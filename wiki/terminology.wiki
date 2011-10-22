@@ -39,6 +39,10 @@ implementation 实现 p1
 
 Imperative language 命令式语言(与函数式语言相对)
 
+= H =
+
+Homoiconicity 同像 在计算机编程领域，Homoiconicity(同像)是一种编程语言的属性，用来指该语言的程序的基本表现形式本身同时也是该语言自身的数据结构。如LISP就是Homoiconic(同像的)。C#的Lambda表达式也是同像的，可以被传唤成表达式树结构，但C#本身不是。 P167
+
 = M =
 multimethods 多路方法，同 多重分派、多元法
 
