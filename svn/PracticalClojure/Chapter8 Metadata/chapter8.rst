@@ -27,17 +27,17 @@
     (with-meta obj meta-map)
     (meta obj)
 
-with-meta函数会生成新对象，对象的值是*obj*,元数据(metadata)是*meta-map*,*meta* 函数返回对象obj的元数据地图(不知怎么翻译好metadata map)。
+with-meta函数会生成新对象，对象的值是*obj*,元数据(metadata)是*meta-map*,*meta* 函数返回对象obj的元数据map(不知怎么翻译好metadata map)。
 例如下面的代码 :: 
     
     user=> (with-meta [1 2] {:about "A vector"})
     #^{:about "A vector"} [1 2]
 
-你也可以用*vary-meta*对象的元数据地图(metadata map):: 
+你也可以用*vary-meta*对象的元数据map(metadata map):: 
     
     (vary-meta obj function & args)
 
-vary-meta 接收一个带有任意参数的函数并应用到对象当前的元数据地图(metadata map)。它会返回一个更新了元数据（metadata）的新对象。
+vary-meta 接收一个带有任意参数的函数并应用到对象当前的元数据map(metadata map)。它会返回一个更新了元数据（metadata）的新对象。
 例如：下面的代码 ::
 
     user=> (def x (with-meta [3 4] {:help "Small vector"}))
