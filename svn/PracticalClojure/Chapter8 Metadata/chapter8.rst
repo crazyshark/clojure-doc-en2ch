@@ -113,7 +113,7 @@ Special forms such as def can make use of this read-time metadata.
 
 变量里的metadata
 ==================================================
-在clojre里最常见的使用元数据的地方是给变量添加描述信息。函数def,defn和defmacro 会给每个变量添加默认的元数据。
+在clojre里最常见的使用元数据的地方是给变量添加描述信息。函数def,defn和defmacro 会给变量添加默认的元数据。
 例如，下面的代码::
     
     user=> (meta (var or))
@@ -125,7 +125,7 @@ Special forms such as def can make use of this read-time metadata.
      ([] [x] [x & next])
     :macro true}
 
-另外，*def* 以及同类的函数会
+另外，*def* 以及同类的函数会  结合reader macro,创建变量时很方便给变量添加元数据。::
 
 
     user=> (def #^{:doc "My cool thing"} \*thing\*)
@@ -133,6 +133,7 @@ Special forms such as def can make use of this read-time metadata.
     user=> (:doc (meta (var \*thing\*)))
     "My cool thing"
 
+clojure的*doc*宏使用一个变量的*:doc*和*:arglists*元数据打印它的元数据::
 
 
     => (doc \*thing\*)
@@ -141,9 +142,49 @@ Special forms such as def can make use of this read-time metadata.
     nil
         My cool thing
 
+defn 和 defmacro forms 的定义的变量的文档字符串自动为*:doc* 元数据。defn和defmacro 也从文档字符串和参数列表接收可选的元数据map.::
 
     (defn name doc-string meta-map [params] ...)
     (defmacro name doc-string meta-map [params] ...)
+
+clojure的全局变量使用若干个标准的元数据键。表8-1 描述 。如果你添加特定应用的元数据，要确保是有效的关键字，像 :my-app/meta,要避免
+潜在的名称冲突。 
+
+Table 8-1. 标准变量的元数据
+
+============= ===========================      ===============
+Metadata Key   value                           Type 
+------------- ---------------------------      ---------------
+:name         变量的名字                       符号(symbol)
+------------- ---------------------------      ---------------
+:ns           变量的命名间                     命名空间
+------------- ---------------------------      ---------------
+:file         被加载的文件                     字符串(String)
+------------- ---------------------------      ---------------
+:line         被定义的行                       整型(Integer)
+------------- ---------------------------      ---------------
+:doc          文档字符串                       字符串(String)
+------------- ---------------------------      ---------------
+:arglists     函数/宏参数                      符号向量的列表 
+------------- ---------------------------      ---------------
+:macro        宏的布尔值,默认false             布尔值
+------------- ---------------------------      ---------------
+:private      私有变量的布尔值，默认false      布尔值
+------------- ---------------------------      ---------------
+:tag          值或函数的返回值类型              类或符号(symbol)
+------------- ---------------------------      ---------------
+
+标签类型(type tags)
+---------------------
+
+元数据键*:tag* 用来给符号和变量添加描述信息。这能够帮助clojure的编译器优化生成的字节码。在15章会详细说明。
+
+
+私有变量(private vars)
+----------------------------
+在第7章中，用:private true 定义的变量的元数据的元数据是私有的。Private Vars cannot be
+referred from namespaces other than the one in which they were defined
+宏defn- 创建私有的函数。为了创建私有的宏或者其它的变量，可以像这样添加元数据。::
 
 
     (def #^{:private true} \*my-private-var\*) ;; for Vars
@@ -151,9 +192,9 @@ Special forms such as def can make use of this read-time metadata.
     ;; for macros
 
 
-
 引用类型里的metadata
 ==================================================
+clojure的可变的引用类型：变量,ref,agent,原子,命名空间都支持元数据。你可以用alter-meta! 函数改变任何引用类型的metadata map.::
 
     (alter-meta! iref f & args)
 
