@@ -94,3 +94,36 @@ user=> (defn nth-char `[s n`]
          (.charAt s n)) 
 
 Reflection warning - call to charAt can't be resolved. 
+
+    只要在调用的方法中对符号添加类型提示，这个警告通常就被消除掉了。对函数的参数或者采用let的本地绑定都有效果。
+
+;; No reflection warnings: 
+
+user=> (defn nth-char `[#^String s n`] 
+         (.charAt s n)) 
+
+#'user/nth-char 
+
+user=> (defn nth-char `[s n`] 
+         (let `[#^String st s`] 
+(.charAt st n))) 
+
+#'user/nth-char 
+
+    在java方法采取不同类型参数重载的情况下，更增加了类型提示的必要性。举个例子，String.replace方法可以接收char 或者 CharSequence参数。你不得不在三个参数上都加类型提示来避免反射。
+
+user=> (defn str-replace `[#^String s a b`] 
+         (.replace s a b)) 
+
+Reflection warning - call to replace can't be resolved. 
+
+#'user/str-replace 
+
+user=> (defn str-replace [#^String s 
+                          #^CharSequence a 
+                          #^CharSequence b] 
+         (.replace s a b)) 
+
+#'user/str-replace
+
+    
