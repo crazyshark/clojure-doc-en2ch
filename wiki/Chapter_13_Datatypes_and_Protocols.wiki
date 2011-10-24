@@ -14,10 +14,10 @@ C H A P T E R  13
     一个协议是数个方法的集合。协议拥有一个名称和一段可选的介绍性文字。其中的每个方法拥有一个名称，一个或者多个参数，和一段可选的介绍性文字。这就是协议！它没有具体的实现，没有实际的代码。
 
 	采用defprotocol来创建协议：
-(defprotocol MyProtocol
+`(defprotocol MyProtocol
   "This is my new protocol"
-  (method-one `[x]` "This is the first method.")
-  (method-two (`[x] [x y]`) "The second method."))
+  (method-one [x] "This is the first method.")
+  (method-two ([x] [x y]) "The second method."))`
   
 	如果你在my.code命名空间中执行这个例子，将创建如下的变量：
 •  my.code/MyProtocol:  一个协议对象.
