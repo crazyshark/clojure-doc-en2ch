@@ -189,8 +189,8 @@ java.lang.Integer
 *循环中的基本类型*
 ------------------
     Clojure在循环体内支持基本类型。在loop或者let绑定的vector中，你可以采用boolean,char,byte,short,int,float和double这些函数来强制使用基本类型。这儿有个例子，是采用欧几里德的算法来计算两个整数的最大公分母：
-(defn gcd `[a b] 
-  (loop `[a (int a), b (int b)] 
+(defn gcd `[a b`] 
+  (loop `[a (int a), b (int b)`] 
     (cond (zero? a) b 
           (zero? b) a 
           (> a b) (recur (- a b) b) 
