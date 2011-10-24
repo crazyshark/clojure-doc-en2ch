@@ -15,14 +15,17 @@ C H A P T E R  13
 
 	采用defprotocol来创建协议：
 `(defprotocol MyProtocol`
+
 `  "This is my new protocol"`
+
 `  (method-one [x] "This is the first method.")`
+
 `  (method-two ([x] [x y]) "The second method."))`
   
 	如果你在my.code命名空间中执行这个例子，将创建如下的变量：
-•  my.code/MyProtocol:  一个协议对象.
-•  my.code/method-one:  一个单参数函数.
-•  my.code/method-two:  一个拥有一个或者两个参数的函数.
+        *  `my.code/MyProtocol:`  一个协议对象.
+        *  `my.code/method-one:`  一个单参数函数.
+        *  `my.code/method-two:`  一个拥有一个或者两个参数的函数.
 
 	method-one 和 method-two 是多态函数，意即它们可以拥有多个不同对象类型的实现。你可以在协议定义后马上调用它们，但是会得到一个异常，因为它们还没有任何具体实现被定义。
 	
