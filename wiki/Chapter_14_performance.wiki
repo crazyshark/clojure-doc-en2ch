@@ -173,3 +173,10 @@ user=> (.length #^String (identity "Hello, World!"))
 13 
 
     Clojure的编译器在跟踪对象类型上面非常聪明。比如，java方法的返回类型总是能够被获知而无须类型提示。只要给予少少的提示，编译器就能够推演出大部分所需的其他类型信息。一般而言，你应该先写出没有任何类型提示的代码，然后打开*warn-on-reflection*参数，仅仅在需要提升性能的地方加上类型提示。
+
+    
+*使用基本类型*
+--------------
+    java的类型系统并非百分百地面向对象；它支持以下这些基本类型：boolean，char，byte,short，int，long，float和double。这些基本类型并不适合java的类体系，当方法中需要把基本类型做为对象使用时，就必须把它们装箱成 Boolean, Character, Byte, Short, Integer, Long, Float, 和Double类。从java1.5开始，java编译器就能够在需要时对基本类型进行自动装箱和拆箱。
+
+    
