@@ -1,5 +1,5 @@
 #summary One-sentence summary of this page.
-= Chapter 9 性能 =
+= Chapter 14 性能 =
 
     在原理上，Clojure能够跟java一样快:两者都是编译成java字节码，运行在java虚拟机上面。Clojure的设计小心地避免了某些特性－－比如连等式，或者类似Common Lisp的条件系统－－这些在jvm上面会严重地危害性能。但Clojure始终是一门年青的语言，并没有耗费成千上万小时去优化编译器。这样的结果是，Clojure的代码通常比等价的java代码运行得要慢些。然而，通过某些细微的调整，Clojure的性能表现能被带到接近java的水平。不要忘记java从代码层面来说，在性能临界上的表现总是可靠的。
 
@@ -22,3 +22,18 @@
 
     
 *采用Time进行简单配置*
+----------------------
+    Clojure拥有一个内建的简单配置工具，time宏。time接受一个简单表达式，分析它，然后打印出执行表达式将耗费多少毫秒：
+user=> (time (reduce + (range 100))) 
+
+"Elapsed time: 1.005 msecs" 
+
+4950 
+
+    就像我们之前提到的，这个测试宏在JVM上下文中几乎没什么意义。来个稍微好点的测试，测试一下在一个闭合循环中重复执行上万次计算：
+user=> (time (dotimes `[i 100000`] 
+               (reduce + (range 100)))) 
+"Elapsed time: 252.594 msecs" 
+nil 
+
+    然而，这依然不能统观全貌，因为JVM可能在执行循环的过程中就对计算进行了优化。
