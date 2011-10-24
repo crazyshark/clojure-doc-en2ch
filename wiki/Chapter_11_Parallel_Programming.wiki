@@ -176,7 +176,7 @@ user=> @my-future
 10000 
 </code>
 
-在这个例子中，(·*· 100 100)在一个独立的线程中执行。在一个实际项目中，这类简单表达式不值得使用future来执行。让我们使用Java的函数Thread.sleep()来模拟一个执行时间较长的运算。在Clojure中，我们通过Thread/sleep来调用这个函数。它可以使当前线程暂停一定的毫秒数。 
+在这个例子中，(`*` 100 100)在一个独立的线程中执行。在一个实际项目中，这类简单表达式不值得使用future来执行。让我们使用Java的函数Thread.sleep()来模拟一个执行时间较长的运算。在Clojure中，我们通过Thread/sleep来调用这个函数。它可以使当前线程暂停一定的毫秒数。 
 
 <code>
 user=> (def my-future (future (Thread/sleep 10000))) 
