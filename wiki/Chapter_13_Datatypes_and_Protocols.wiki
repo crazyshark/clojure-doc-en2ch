@@ -76,46 +76,63 @@ user> (:name emp)
 user> (:room emp)
 304
 
-	这可比在map中查找或者采用StructMap的存取器函数要快得多了。数据类型实例同样支持assoc 和 dissoc函数。
+	这可比在map中查找或者采用`StructMap`的存取器函数要快得多了。数据类型实例同样支持assoc 和 dissoc函数。
 user=> (defrecord Scientist `[name iq]`)
+
 user.Scientist
+
 user=> (def x (Scientist. "Albert Einstein" 190))
+
 #'user/x
+
 user=> (assoc x :name "Stephen Hawking")
+
 #:user.Scientist{:name "Stephen Hawking", :iq 190}
 
 	你甚至可以在不改变对象类型的情况下，为对象添加一个原本数据类型没有的字段。
 user=> (assoc x :field "physics")
+
 #:user.Scientist{:name "Albert Einstein", :iq 190, :field "physics"}
 
 	然而，如果你采用dissoc函数来清除原本数据类型的关键字，你会得到一个普通的map结果。
 user=> (dissoc x :iq)
+
 {:name "Albert Einstein"}
 
 
-实现协议和接口
+*实现协议和接口*
+----------------
 	一个数据类型，单独来看，只是用来存储数据的。一个协议，单独来看，完全没有任何操作。它们两者联合组成了一个强力的抽象概念。一旦定义了一个协议，它能够扩展到支持任何数据类型，我们说数据类型实现了协议。在这个阶段，协议定义的方法在数据类型的实例上就可以被调用了。
 
-内联方法
-
+*内联方法*
+----------
 	在使用defrecord创建一个数据类型时，你能够应用方法来实现任意数量的协议。语法如下：
 (defrecord name `[fields...]`
+
   SomeProtocol
+
     (method-one `[args]` ... method body ...)
+
     (method-two `[args]` ... method body ...)
+
   AnotherProtocol
+
     (method-three `[args]` ... method body ...))
 	
 	你可以在字段vector后面挂接任意数量的协议和方法。每个方法实现拥有跟对应协议中一样的参数数量。而数据类型的实例字段在方法内部跟方法的局部变量同样有效，直接使用名字就可以调用。
 (defrecord name `[x y z]`
+
   SomeProtocol
+
   (method-one `[args]` 
+
     ...do stuff with x, y, and z...))
 	
 	有一些仅在方法内部生效的局部变量：defrecord并没有遮蔽语法的作用范围，比如fn，proxy，或者reify，这些将在“具体化匿名数据类型”（Reifying Anonymous Datatypes）章节中讲到。
 
 
-继承java 接口
+*继承java 接口*
+---------------
 	数据类型同样也可以实现java 接口的方法。举个例子，你可以实现java.lang.Comparable接口，这样就允许你的新数据类型能够支持Clojure比较函数：
 user> (defrecord Pair `[x y]`
         java.lang.Comparable
@@ -139,9 +156,8 @@ user> (compare (Pair 1 3) (Pair 1 100))
 	java 接口有时会定义重载方法－－拥有不同参数类型相同名字的系列方法。如果这些方法拥有不同的参数个数（参数数量），只需要挨个定义参数就像是在不同名字的方法里面一样。（不要采用fn的多重参数数量语法。）如果这些方法拥有不同类型的参数，添加类型标签（Chapter 8）去声明它们。
 
 
-如同类的数据类型
-
-
+*如同类的数据类型*
+------------------
 	一个数据类型等同于一个拥有公共常量实例字段并实现了任意数量接口的java 类。不过它并没有继承任何类除了java.lang.Object。
 
 	不同于java 类的是，一个数据类型并不需要实现每个协议或者接口的所有方法。在数据类型中调用并未实现的方法会抛出一个AbstractMethodError。
@@ -157,8 +173,8 @@ user> (Point. 1 5)
 #:Point{:x 1.0, :y 5.0}
 
 
-扩展协议为已存在类型
-
+*扩展协议为已存在类型*
+-----------------------
 	有时你或者需要创建一个新的协议来操作一个已存在的数据类型。假设现在你无法修改defrecord定义的源代码。你仍然可以采用extend函数扩展协议来支持那个数据类型：
 (extend DatatypeName
   SomeProtocol
@@ -199,15 +215,15 @@ user> (Point. 1 5)
 	 采用extend和它关联的宏添加的方法附属于协议，而不是数据类型本身。这使得它们更加灵活（它们作用于标准的java 类，在接下来的章节中会讲到），但比起直接内嵌在defrecord中的方法来要稍微低效一些。
 
 
-继承java 类和接口
-
+*继承java 类和接口*
+--------------------
 	数据类型和协议是一种强力的抽象类型，但是你经常不得不涉及那些你没有源代码的java类。java 并没有提供一种为已经存在的类添加新接口的方法（被称为接口注入），但Clojure协议可以被扩展为支持已存在的java 类。
 
 	extend, extend-type, 和 extend-protocol都接受java 类做为”类型“。这同样可以作用于接口上。你能够编写(extend-type SomeInterface...)来为所有实现了SomeInterface的类添加一个协议。这开创了多重继承或者实现的可能性，因为一个类可以实现不止一个接口；结果是当前未定义的情况应该被避免。
 
 
-具体化匿名数据类型
-
+*具体化匿名数据类型*
+--------------------
 	有时你需要一个实现了某一协议或者接口的对象，但是你确实不想创建一个命名的数据类型。Clojure1.2通过reify宏来支持这点：
 (reify
   SomeProtocol
@@ -231,24 +247,24 @@ user> (str thing)
 	在概念上，reify扮演了java 中匿名内部类同样的角色。
 
 	
-致力于使用数据类型和协议
-
+*致力于使用数据类型和协议*
+---------------------------
 	数据类型和协议是Clojure中显著的新特性，它们将对大部分Clojure程序的编写产生重大影响。标准和最佳实践仍在发展中，但很少出现指导方针：
 
-•  比起代理来，最好是使用reify，除非你需要去覆写基类的方法。
-•  比起gen-class来，最好是使用defrecord，除非你需要gen-class的特性去做java 交互
-•  在任何情况下，最好是使用defrecord，而不是defstruct。
-•  采用协议定义你的抽象，而不是接口。
-•  在单参数，基于类型来区分多个方法的情况下，最好是采用协议而不是multimethods。
-•  仅在消除歧义或者性能需求（Chapter 14）的情况下添加类型提示；大部分情况下，类型会被自动识别。
+*  比起代理来，最好是使用reify，除非你需要去覆写基类的方法。
+*  比起gen-class来，最好是使用defrecord，除非你需要gen-class的特性去做java 交互
+*  在任何情况下，最好是使用defrecord，而不是defstruct。
+*  采用协议定义你的抽象，而不是接口。
+*  在单参数，基于类型来区分多个方法的情况下，最好是采用协议而不是multimethods。
+*  仅在消除歧义或者性能需求（Chapter 14）的情况下添加类型提示；大部分情况下，类型会被自动识别。
 
 	数据类型和协议并没有移除已存在的任何特性：defstruct, gen-class, proxy, 和multimethods这些都还在。只是defstruct已经有可能被废弃掉。
 
 	协议/数据类型和java 类的最大不同就在于没有继承。协议的扩展机制被设计为允许在不进行具体继承的情况下重用方法，因为具体继承总是关联着问题。
 
 
-一个完整的示例
-
+*一个完整的示例*
+----------------
 	这儿有个采用了协议和数据类型的经典“payroll”示例版本，这个payroll系统将拥有一个方法来基于雇员的工作时间来计算他们的薪水：
 (defprotocol Payroll
   (paycheck `[emp hrs]`))
@@ -281,8 +297,8 @@ user=> (paycheck con1 80)
 5000
 
 
-高级数据类型
-
+*高级数据类型*
+--------------
 	defrecord定义的数据类型在存储结构化数据上面非常有用，但是根本上而言，它们总是表现得象map。如果你希望定义一个彻底全新的类型，表现得完全不像map，那么就采用deftype来代替defrecord。deftype是个defrecord的“低层次”版本。
 (deftype name `[fields...]`
   SomeProtocol
@@ -293,19 +309,30 @@ user=> (paycheck con1 80)
 	deftype的语法基本和defrecord一样，但是deftype不会为你创建任何默认的方法实现。你必须自己实现所有的方法，包括标准对象方法比如equals 和 hashCode。deftype创建一个“空”的java 类；这个类旨在允许以Clojure的方式重定义核心数据结构，比如vectors 或者 maps。
 
 
-摘要
+*摘要*
 
 	数据类型和协议是Clojure1.2中两个最令人激动的新特性。它们提供了一种强力的解决方案来处理面向对象设计能解决的问题，但并不采用面向对象中过时的继承实现概念。实际上，数据类型和协议同面向对象设计的早期研究具有显著的相似。它们优美地处理了往已存在的类型上添加新函数的问题，这有时候被称为“表达式问题”。因为它们基于java 平台高度优化的方法分发设计，所以能提供良好的性能。
 
 术语对照：
+
 数据类型－－datatype
+
 协议－－－－protocol
+
 方法－－－－method
+
 函数－－－－function
+
 类－－－－－class
+
 对象－－－－object
+
 实现－－－－implement
+
 抽象－－－－abstraction
+
 扩展－－－－extend
+
 继承－－－－inheritance
+
 面向对象－－object-oriented
