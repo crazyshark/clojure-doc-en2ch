@@ -9,8 +9,15 @@
     
     不要假设一项技术必然更快因为它似乎拥有更少的步骤或者采用更少的变量。但这在现代的JVM比如Hotspot上面是对的，JVM在程序运行的过程中不断地估算代码的性能，动态地重新编译临界区。
 
-    所谓的微基准，在隔离条件下测量某个单独操作，在当前的环境下是没有意义的。
-Also meaningless are benchmarks where the start-up time of the JVM dominates the 
-measurement (this is a frequent error in comparisons between Java and C++). Modern JVMs are typically 
-optimized for throughput, maximizing the total number of operations that can be performed over a long 
-period of time. 
+    所谓的微基准，即在隔离条件下测量某个单独操作，在当前的环境下是没有意义的。同样，以JVM初始化启动时间做为标准的测量也是没有意义的（这个错误通常发生在对比java和C++时）。现代的JVM通常针对吞吐量进行优化，最大化了操作的总量，哪怕是有可能要花很长一段时间来执行的操作。
+
+
+*JAVA性能的一般技巧*
+--------------------
+    java虚拟机有一堆可以影响性能的选项。首先，JVM要区分“客户端”和“服务端”模式，“服务端”模式的性能全面超越“客户端”（代价是更长的启动时间）。
+
+    其次，Java堆空间的大小和选择不同的垃圾收集器策略同样影响性能。这对于Clojure来说尤为真实，因为比起Java来，Clojure对常量的频繁使用会占用更多的堆空间，也会给垃圾收集造成更大的压力。
+
+    在现代JVM中有更多可调整的参数会影响性能。你要确保很熟悉虚拟机提供给你的“性能开关”，并且尝试着观察它们如何影响你实际应用的性能。
+
+    
