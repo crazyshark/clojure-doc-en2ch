@@ -160,3 +160,16 @@ user=> (.length (greeting))  ;; no reflection warning
 13 
 
 user=> (defn greeting {:tag String} `[`] "Hello, World!") ;; same as above 
+
+    在极少的情况下，符号的类型提示都无法有效地避免反射。在这样的情况下，你可以为整个表达式加上类型提示：
+user=> (.length (identity "Hello, World!")) 
+
+Reflection warning - reference to field length can't be resolved. 
+
+13 
+
+user=> (.length #^String (identity "Hello, World!")) 
+
+13 
+
+    Clojure的编译器在跟踪对象类型上面非常聪明。比如，java方法的返回类型总是能够被获知而无须类型提示。只要给予少少的提示，编译器就能够推演出大部分所需的其他类型信息。一般而言，你应该先写出没有任何类型提示的代码，然后打开*warn-on-reflection*参数，仅仅在需要提升性能的地方加上类型提示。
