@@ -82,4 +82,15 @@ user=> (dotimes [j 5]
 
     要在静态类型的java上面实现动态类型的函数调用，Clojure采用了java的反射特性。反射允许代码在运行时查阅java的类并根据名字来调用方法。然而，通过反射调用方法比直接调用编译后的方法要慢上很多。
 
-    Clojure允许你为符号和表达式加上类型提示以避免编译器通过反射调用方法。类型提示采用:tag关键字通过读取时元数据来进行声明。一个类型提示的symbol可以写成#^{:tag hint} symbol，通常简写为#^hint symbol。
+    Clojure允许你为符号和表达式加上类型提示以避免编译器通过反射调用方法。类型提示采用:tag关键字通过读取时元数据来进行声明。一个类型提示的symbol可以写成`#^{:tag hint} symbol，通常简写为`#^hint symbol。类型提示是一个java的类名。（这个类名会同样是个字符串，很少被需要去处理java费解的互用性问题）
+
+    为了找出一个方法是反射调用还是不是，设置编译器属性**warn-on-reflection**为真，然后，执行代码，如果遇到反射调用，Clojure的编译器就会打印出一条警告信息。
+
+user=> (set! **warn-on-reflection** true) 
+
+true 
+
+user=> (defn nth-char `[s n`] 
+         (.charAt s n)) 
+
+Reflection warning - call to charAt can't be resolved. 
