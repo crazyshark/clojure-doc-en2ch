@@ -198,11 +198,16 @@ clojure的可变的引用类型：变量,ref,agent,原子,命名空间都支持�
 
     (alter-meta! iref f & args)
 
+alter-meta! 函数作用类似alter函数，它调用iref metadata map里的函数f,函数参数是args 。例如，你可以这样给一个存在的变量添加元数据。::
+
 
     (alter-meta! (var for) assoc :note "Not a loop!")
     {:note "Not a loop!" :macro true, ...
     user=> (:note (meta (var for)))
     "Not a loop!"
+
+alter-meta! 是原子操作，但是，它不会像alter需要事务处理。
+ref,agent,和atom函数接收:meta选项指定初始化的元数据map 。例如，下面的代码::
 
     user=> (def r (ref nil :meta {:about "This is my ref"}))
     user=> (meta r)
@@ -213,4 +218,7 @@ clojure的可变的引用类型：变量,ref,agent,原子,命名空间都支持�
 总结
 ===================================================
 
-元数据(metadata)是种与种不同的特性。
+元数据(metadata)是种与种不同的特性。在日常编程中会频繁的使用。
+元数据在元编程应用最多，它可以用一种形式的代码生成另一种形式的代码。在某种意义上说，它起到了java注释的作用。
+元数据的所有功能还需要clojure程序员去探索。元数据也在clojure编译器起了重要的作用。（类型推断），在未来的clojure
+版本中作用会更大。
