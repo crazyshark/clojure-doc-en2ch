@@ -34,6 +34,25 @@ user=> (time (reduce + (range 100)))
 user=> (time (dotimes `[i 100000`] 
                (reduce + (range 100)))) 
 "Elapsed time: 252.594 msecs" 
+
 nil 
 
-    然而，这依然不能统观全貌，因为JVM可能在执行循环的过程中就对计算进行了优化。
+    然而，这依然不能统观全貌，因为JVM可能在执行循环的过程中就对计算进行了优化。多次重复循环就能得到一个更加精确的结果：
+user=> (dotimes [j 5] 
+         (time (dotimes [i 100000] 
+                 (reduce + (range 100))))) 
+"Elapsed time: 355.759 msecs" 
+
+"Elapsed time: 239.404 msecs" 
+
+"Elapsed time: 217.362 msecs" 
+
+"Elapsed time: 221.168 msecs" 
+
+"Elapsed time: 217.753 msecs"
+
+    如同你看到的那样，在这个例子中，数次迭代的执行时间基本上在220毫秒上下波动。这种模式就是JVM的特点。
+
+    然而，即使拥有了这些信息，你仍然无法准确预期在一个大的应用上下文中，(reduce + (range 100))这个计算的性能如何。只能执行更多的测试来验证了。
+
+    同样地，我们也得意识到延迟序列（lazy sequences）对于性能的影响。如果你用来测试的表达式采用了延迟序列（比如：map），time宏可能就只会给出初始化序列的时间。为了计算出获得整个序列的时间，你必须采用doall。但doall在复杂的数据结构中很难执行，而且获得的结果并不代表数据结构实际使用的性能。
