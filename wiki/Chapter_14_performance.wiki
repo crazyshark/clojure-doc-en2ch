@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary Practical Clojure Chapter 14 Performance.
 = Chapter 14 性能 =
 
     在原理上，Clojure能够跟java一样快:两者都是编译成java字节码，运行在java虚拟机上面。Clojure的设计小心地避免了某些特性－－比如连等式，或者类似Common Lisp的条件系统－－这些在jvm上面会严重地危害性能。但Clojure始终是一门年青的语言，并没有耗费成千上万小时去优化编译器。这样的结果是，Clojure的代码通常比等价的java代码运行得要慢些。然而，通过某些细微的调整，Clojure的性能表现能被带到接近java的水平。不要忘记java从代码层面来说，在性能临界上的表现总是可靠的。
@@ -72,5 +72,14 @@ user=> (dotimes [j 5]
 (defn really-slow-function `[x y z`] ...) 
 
 (def faster-function (memoize really-slow-function)) 
+
+    备忘是一个牺牲内存加速执行的经典例子。如果一个函数需要花费比哈希表寻址更多的时间去计算结果，而且它又经常以同样的输入参数被调用，那么采用备忘就是一种好的候选方案。只有纯函数－－意即针对特定输入总是返回同样结果的函数－－能够进行备忘。
+
+    
+*反射和类型提示*
+----------------
+    就像你所知的那样，java是种静态类型语言：它是在编译时确定所有对象的类型。而Clojure是动态类型，意即某些对象的类型一直要到运行时才会确定。
+
+    要在静态类型的java上面实现动态类型的函数调用，Clojure采用了java的反射特性。反射允许代码在运行时查阅java的类并根据名字来调用方法。然而，通过反射调用方法比直接调用编译后的方法要慢上很多。
 
     
