@@ -70,6 +70,7 @@ user=> (dotimes [j 5]
 
     Clojure内建支持备忘的函数是memoize，它接收一个函数做为参数，返回这个函数的备忘版本:
 (defn really-slow-function [x y z] ...) 
+
 (def faster-function (memoize really-slow-function)) 
 
     
