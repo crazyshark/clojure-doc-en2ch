@@ -126,4 +126,37 @@ user=> (defn str-replace [#^String s
 
 #'user/str-replace
 
-    
+    注意类型提示并非强制类型转换，它并不能把一种数据类型转换成另一种。采用错误的参数类型调用一个类型提示方法会抛出一个运行时错误：
+user=> (str-replace "Hello" \H \J) 
+
+java.lang.ClassCastException: java.lang.Character cannot be cast to java.lang.CharSequence 
+
+    同样，注意一个不正确的提示类型会导致一个反射警告：
+user=> (defn str-replace `[#^String s #^Integer a #^Integer b`] 
+         (.replace s a b)) 
+
+Reflection warning - call to replace can't be resolved. 
+
+#'user/str-replace 
+
+    你可以在函数定义时为Var加一个类型标记，为函数的返回值做类型提示。这在任何Var上都起作用，包括那些做为全局值使用的。
+
+user=> (defn greeting `[`] "Hello, World!")  ;; no type hint 
+
+#'user/greeting 
+
+user=> (.length (greeting)) 
+
+Reflection warning - reference to field length can't be resolved. 
+
+13 
+
+user=> (defn #^String greeting `[`] "Hello, World!") 
+
+#'user/greeting 
+
+user=> (.length (greeting))  ;; no reflection warning 
+
+13 
+
+user=> (defn greeting {:tag String} `[`] "Hello, World!") ;; same as above 
