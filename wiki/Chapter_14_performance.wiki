@@ -69,7 +69,7 @@ user=> (dotimes [j 5]
     有一项能够加速大型复杂函数的简单技术叫做备忘（memoization），这是某种形式的缓存。当每次调用函数时，一个备忘函数会在table中储存被调函数的输入参数以及返回值。如果这个函数以同样的输入参数被再次调用时，它返回的就是储存在table中的值而不需要再次进行计算。
 
     Clojure内建支持备忘的函数是memoize，它接收一个函数做为参数，返回这个函数的备忘版本:
-(defn really-slow-function [x y z] ...) 
+(defn really-slow-function `[x y z`] ...) 
 
 (def faster-function (memoize really-slow-function)) 
 
