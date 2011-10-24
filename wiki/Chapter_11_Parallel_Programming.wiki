@@ -277,9 +277,3 @@ Clojure引入的并行机制很多，他们基本遵循下面的简述：
   * Clojure的代理技术，可以提供一个高级的，基于线程池的线程管理系统，管理线程的状态和执行。
 
 要成功编写一个高度并发的Clojure程序，需要选择正确的线程模型，使用前面我们介绍的方法，并且安全的进行状态管理（在第10章讨论）。Clojure提供了简单易用的工具，可以让我们轻松完成这一系列任务。
-
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
