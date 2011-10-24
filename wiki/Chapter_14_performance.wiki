@@ -31,15 +31,15 @@ user=> (time (reduce + (range 100)))
 4950 
 
     就像我们之前提到的，这个测试宏在JVM上下文中几乎没什么意义。来个稍微好点的测试，测试一下在一个闭合循环中重复执行上万次计算：
-user=> (time (dotimes `[i 100000`] 
+user=> (time (dotimes `[`i 100000`]` 
                (reduce + (range 100)))) 
 "Elapsed time: 252.594 msecs" 
 
 nil 
 
     然而，这依然不能统观全貌，因为JVM可能在执行循环的过程中就对计算进行了优化。多次重复循环就能得到一个更加精确的结果：
-user=> (dotimes [j 5] 
-         (time (dotimes [i 100000] 
+user=> (dotimes `[`j 5`]` 
+         (time (dotimes `[`i 100000`]` 
                  (reduce + (range 100))))) 
 "Elapsed time: 355.759 msecs" 
 
@@ -69,7 +69,7 @@ user=> (dotimes [j 5]
     有一项能够加速大型复杂函数的简单技术叫做备忘（memoization），这是某种形式的缓存。当每次调用函数时，一个备忘函数会在table中储存被调函数的输入参数以及返回值。如果这个函数以同样的输入参数被再次调用时，它返回的就是储存在table中的值而不需要再次进行计算。
 
     Clojure内建支持备忘的函数是memoize，它接收一个函数做为参数，返回这个函数的备忘版本:
-(defn really-slow-function `[x y z`] ...) 
+(defn really-slow-function `[`x y z`]` ...) 
 
 (def faster-function (memoize really-slow-function)) 
 
@@ -90,7 +90,7 @@ user=> (set! **warn-on-reflection** true)
 
 true 
 
-user=> (defn nth-char `[s n`] 
+user=> (defn nth-char `[`s n`]` 
          (.charAt s n)) 
 
 Reflection warning - call to charAt can't be resolved. 
@@ -99,29 +99,29 @@ Reflection warning - call to charAt can't be resolved.
 
 ;; No reflection warnings: 
 
-user=> (defn nth-char `[#^String s n`] 
+user=> (defn nth-char `[`#^String s n`]` 
          (.charAt s n)) 
 
 #'user/nth-char 
 
-user=> (defn nth-char `[s n`] 
-         (let `[#^String st s`] 
+user=> (defn nth-char `[s n]` 
+         (let `[#^String st s]` 
 (.charAt st n))) 
 
 #'user/nth-char 
 
     在java方法采取不同类型参数重载的情况下，更增加了类型提示的必要性。举个例子，String.replace方法可以接收char 或者 CharSequence参数。你不得不在三个参数上都加类型提示来避免反射。
 
-user=> (defn str-replace `[#^String s a b`] 
+user=> (defn str-replace `[#^String s a b]` 
          (.replace s a b)) 
 
 Reflection warning - call to replace can't be resolved. 
 
 #'user/str-replace 
 
-user=> (defn str-replace [#^String s 
+user=> (defn str-replace `[#^String s 
                           #^CharSequence a 
-                          #^CharSequence b] 
+                          #^CharSequence b]` 
          (.replace s a b)) 
 
 #'user/str-replace
@@ -132,7 +132,7 @@ user=> (str-replace "Hello" \H \J)
 java.lang.ClassCastException: java.lang.Character cannot be cast to java.lang.CharSequence 
 
     同样，注意一个不正确的提示类型会导致一个反射警告：
-user=> (defn str-replace `[#^String s #^Integer a #^Integer b`] 
+user=> (defn str-replace `[#^String s #^Integer a #^Integer b]` 
          (.replace s a b)) 
 
 Reflection warning - call to replace can't be resolved. 
@@ -141,7 +141,7 @@ Reflection warning - call to replace can't be resolved.
 
     你可以在函数定义时为Var加一个类型标记，为函数的返回值做类型提示。这在任何Var上都起作用，包括那些做为全局值使用的。
 
-user=> (defn greeting `[`] "Hello, World!")  ;; no type hint 
+user=> (defn greeting `[]` "Hello, World!")  ;; no type hint 
 
 #'user/greeting 
 
@@ -151,7 +151,7 @@ Reflection warning - reference to field length can't be resolved.
 
 13 
 
-user=> (defn #^String greeting `[`] "Hello, World!") 
+user=> (defn #^String greeting `[]` "Hello, World!") 
 
 #'user/greeting 
 
@@ -159,7 +159,7 @@ user=> (.length (greeting))  ;; no reflection warning
 
 13 
 
-user=> (defn greeting {:tag String} `[`] "Hello, World!") ;; same as above 
+user=> (defn greeting {:tag String} `[]` "Hello, World!") ;; same as above 
 
     在极少的情况下，符号的类型提示都无法有效地避免反射。在这样的情况下，你可以为整个表达式加上类型提示：
 user=> (.length (identity "Hello, World!")) 
@@ -189,8 +189,8 @@ java.lang.Integer
 *循环中的基本类型*
 ------------------
     Clojure在循环体内支持基本类型。在loop或者let绑定的vector中，你可以采用boolean,char,byte,short,int,float和double这些函数来强制使用基本类型。这儿有个例子，是采用欧几里德的算法来计算两个整数的最大公分母：
-(defn gcd `[a b`] 
-  (loop `[a (int a), b (int b)`] 
+(defn gcd `[a b]` 
+  (loop `[a (int a), b (int b)]` 
     (cond (zero? a) b 
           (zero? b) a 
 
