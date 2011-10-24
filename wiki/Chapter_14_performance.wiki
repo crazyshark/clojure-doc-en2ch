@@ -179,4 +179,13 @@ user=> (.length #^String (identity "Hello, World!"))
 --------------
     java的类型系统并非百分百地面向对象；它支持以下这些基本类型：boolean，char，byte,short，int，long，float和double。这些基本类型并不适合java的类体系，当方法中需要把基本类型做为对象使用时，就必须把它们装箱成 Boolean, Character, Byte, Short, Integer, Long, Float, 和Double类。从java1.5开始，java编译器就能够在需要时对基本类型进行自动装箱和拆箱。
 
-    
+    在Clojure中，一切都是对象，所以数字总是被装箱过的。这个可以在检查简单算术的结果时看到：
+user=> (class (+ 1 1)) 
+
+java.lang.Integer 
+
+    然而，在JVM中，操作装箱的数字比不装箱的基本类型要来得慢。所以，在数学计算密集的应用中，采用装箱数字的Clojure代码要比直接采用基本类型的java代码要慢一些。
+
+*循环中的基本类型*
+------------------
+    Clojure在循环体内支持基本类型。在loop或者let绑定的vector中，你可以采用boolean,char,byte,short,int,float和double这些函数来强制使用基本类型。
