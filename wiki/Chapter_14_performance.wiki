@@ -225,3 +225,153 @@ java.lang.Integer
       (recur (+ sum i) (inc i))))) 
 
     循环变量sum和i的初始值必须采用int函数强制转换为基本类型。对max的强制基本类型转换在循环外进行的，因为它只需要赋值一次。如果你采用字面数字100替代本地变量max，代码依然有效，但是不会象之前那么快了。
+	
+*无类型检查的整数运算*
+--------------------
+    Clojure的基本运算被定义为类型安全的，意即如果操作的结果大于返回值类型的长度，就会抛出一个错误。举个例子，下面这个循环计算2的64次方，就会抛出一个异常：
+
+`user=> (let [max (int 64) 
+
+             two (int 2)] 
+			 
+         (loop [total (int 1), n (int 0)] 
+		 
+           (if (== n max) 
+		   
+               total 
+			   
+             (recur (* total two) (inc n))))) 
+			 
+java.lang.ArithmeticException: integer overflow `	
+
+    然而，某些特定的算法（比如：散列法）在整数运算中是允许悄然溢出的。Clojure提供了一系列函数用于象java算术操作一样准确执行整数运算。它们都接收Integer或者Long参数，并且支持基本类型。
+	
+	以下这些函数都有整型溢出的倾向：unchecked-add, unchecked-subtract,unchecked-multiply, unchecked-negate, unchecked-inc, 和 unchecked-dec。
+	
+user=> (unchecked-inc Integer/MAX_VALUE) 
+
+-2147483648 
+
+user=> (unchecked-negate Integer/MIN_VALUE) 
+
+-2147483648 
+
+    unchecked-divide 和 unchecked-remainder函数会把结果截断为整型。
+	
+user=> (unchecked-divide 403 100) 
+
+4 
+
+    无类型检查的操作在使用循环基本类型时，比标准的算术函数要稍快一些。但是，在你使用无类型检查的函数前，要先想好能否接受没有安全检查所导致的结果。
+	
+*基本数组*
+----------
+    从Clojure1.1开始，你能够为数组声明基本类型提示：Java的boolean[], char[], byte[], short[], int[], long[], float[], 和 double[]数组能被分别标识为#^booleans, #^chars, #^bytes, #^shorts, #^ints, #^longs, #^floats, and #^doubles。（同样可以采用#^objects 标识 `Object[]`）
+	
+	有类型提示的数组可以采用aget 和 aset进行基本类型操作，而没必要采用类型强制的注入函数比如aset-int和aset-double；实际上，这些类型强制的函数比aset在操作类型提示的数组时要更慢。对于aset来说，新添加的值必须总是正确的基本类型。对于aset和aget而言，数组的下标必须是基本类型int。在保留函数式编程方式的情况下操作基本类型数组，amap和areduce宏（Chapter10中有描述）无疑是更好更快的选择。
+	
+*瞬态（Transients）*
+--------------------
+    就像你已经了解到的那样，Clojure中的数据结构是不可变且持久化的，这样就保障了在多线程中的并发安全性。但是如果你有一个明确知道只会应用于单线程中的线程又怎么样呢？是否还是需要付出不可变/持久化的性能代价呢？Clojure的答案是：不！
+	
+	Clojure1.1引入了transients，这是一个临时的、可变的且性能最优化的数据结构。当你通过一系列步骤构建一个巨大的数据结构时，它显得尤为有用。j
+	
+	transients的一个关键特性是它不用你改变代码中任何函数式编程风格。最重要的是，它并非真正给你一个可变的数据结构（如同java的collection实现类那样）让你可以肆意妄为。transients的可变特性主要在实现细节上。
+	
+	可以通过以下的例子对transients来作出最好的解释，下面的代码创建了一个map，将ASCII字符转化为对应的十进制值：
+	
+`(loop [m {}, i 0] 
+
+  (if (> i 127) 
+  
+    m 
+	
+    (recur (assoc m (char i) i) (inc i)))) `
+	
+	以下是采用transients循环的同样实现：
+	
+`(loop [m (transient {}), i 0] 
+
+  (if (> i 127) 
+  
+    (persistent! m) 
+	
+    (recur (assoc! m (char i) i) (inc i)))) `
+	
+	注意那些非常细小的改动。这个例子展示了采用transients所需的三处代码改动：
+	* 采用transient函数初始化一个transient版本的数据结构。transient函数支持Vectors, hash maps, 和 hash sets。
+	* 将conj, assoc, dissoc, disj, 和 pop替换成它们对应的transient版本：conj!, assoc!, dissoc!, disj!, 和 pop! 。
+	* 在结果调用persistent!来返回一个普通的持久化数据结构。
+	
+	transients的一个重要特性是，不管输入的大小，transient和persistent!函数总是在固定的时间运行。因此，采用transient函数初始化一个大的数据结构，然后采用transient特有的函数去操作它，最后在返回前调用persistent!，这样是非常高效的。
+	
+	记住，transients并非如同java collection般的可变数据结构。就像持久化数据结构一样，你必须采用任何函数的返回值来做为改变了的数据结构。下面这个指令式的代码是不会生效的：
+	
+`;; bad code! 
+
+(let [m (transient {})] 
+
+  (dotimes [i 127] 
+  
+    (assoc! m (char i) i)) 
+	
+  (persistent! m)) `
+  
+    dotimes宏创建一个指令式的循环，在每次迭代中，assoc!的返回值被丢弃了。这段代码的实际结果是无法预测的，但通常都是错的。
+	
+	通常而言，transients被用于单一函数内部或者loop/recur代码块中。它们可以被传递给其他函数，但必须严格遵守以下限制：
+	* 必须执行线程隔离。访问另一个线程的transient结构会抛出一个异常。
+	* 在调用了persistent!之后，数据结构的transient版本就已经被废弃了，如果再次尝试访问它，会抛出一个异常。
+	* transient结构的中间版本不能被存储或者使用，只有最后一个版本是有效的（这不同于其他持久化的数据结构）。
+	
+	transients的优势在于进行数据结构改变操作时比其他持久化的数据结构要快很多。通常，你在任何地方递归创建一个大的数据结构，transients都能提供相当的性能优化。但是，transients的使用总是要限制在单一函数体中，而不能传播到其他代码层面去。
+	
+*Var查找*
+----------
+    每次你使用一个Var时，Clojure就会去找到这个Var的值。如果你在循环中重复使用同一个Var，寻值的过程就会大大拖慢代码。为了避免这种性能问题，采用let在循环的范围中把Var的值绑定到本地，如同以下例子：
+	
+`(def *var* 100) 
+
+(let [value *var*] 
+
+  ... loop using value instead of *var* ...) `
+  
+    采用这个技术需要注意的是：它并非总能带来性能提升，而且在未来的发布版本中可能变得不必要。
+	
+*代码嵌入（Inlining）*
+----------------------
+    代码嵌入－－采用编译过的函数体来代替函数调用－－是在编译器中一个常见的优化。Hotspot类型的JVM广泛地将关键性能的代码进行嵌入。
+	
+	Clojure对基本类型进行自动嵌入。然而，能够接受数个参数的算术函数，比如+，仅在接受两个参数的情况下可以被嵌入。这意味着以下代码：
+	
+(+ a b c d)
+
+    如果写成这样将会更快：
+	
+(+ a (+ b (+ c d))) 
+
+    尤其是参数的值是基本类型时，速度差异更加明显。这个在未来的发布版本中可能变得不必要。
+	
+*宏和定义嵌入*
+--------------
+    从某种意义来说，宏也是代码嵌入的一种，因为它会在编译时被展开。然而，宏不能被高阶函数（比如map和reduce）做为参数使用。
+	
+	做为替代，Clojure提供了definline。definline看起来功能跟defmacro一样：它的主体会返回一个代表代码已经被编译过的数据结构。不同于defmacro的是，它会创建一个可以象普通函数那样到处被使用的真正函数。下面是例子：
+	
+`;; a normal function: 
+
+(defn square [x] (* x x))
+ 
+;; an inlined function: 
+
+(definline square2 [x] `(* ~x ~x)) `
+
+    在Clojure中，definline被标记为”实验性“的。它的存在主要是为了解决函数无法接受基本类型参数或者无法返回基本类型值的问题。当函数对基本类型的支持特性被添加后，JVM会自动内嵌你的代码，而definline将变得不必要。
+	
+*摘要*
+-------
+    就像著名的Donald Knuth说的那样，”过早进行性能优化是一切错误的根源“。关键字在于”过早“。在你做过测试之前就进行优化是毫无意义的。在你没有确认性能关键点之前进行优化比不做更糟糕。在一个实时编译、自动优化的运行时环境（比如JVM）中，情况变得更加不确定，因为监控某块代码并预测它的运行速度是很困难的。
+	
+	最佳的途径是从两个不同的角度去确认性能：第一，高层次的性能考虑，比如避免不必要的I/O瓶颈，在应用的设计阶段就应当考虑到。而低层次的性能考虑应该延期到代码设计完成，通过性能工具确认了性能关键点后去考虑。
+	
+	Clojure提供了很多工具去优化代码性能而不用牺牲函数式风格。当这些工具都不够用时，你就需要退回到编程技术上，或者在Clojure采用数组，或者是在java中实现功能，再由Clojure来调用。
