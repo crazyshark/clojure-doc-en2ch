@@ -140,3 +140,47 @@ user=> (multiply 5 3)
 user=> (#(* % %) 5) 
 25 
 }}}
+==条件表达式（Conditional Expressions）==
+任何编程语言都应该有在根据情况来改变程序流程的基本特性，Clojure当然也不例外，它提供了全套简单的条件形式。
+最基本的条件形式是* if *语句，将一个判断表达式作为它的第一个参数进行求值。如果求值为true，那么就返回它的第二个参数（相当于“then”子句）的求值结果。如果结果为false（包括nil）就返回第三个参数的求值结果（相当于“else”子句），前提是有提供第三个参数并且不为空。用下面的代码举个例子：
+{{{
+user=> (if (= 1 1) 
+     "Math still works.") 
+"Math still works." 
+}}}
+另外一个例子执行else表达式：
+{{{
+user=> (if (= 1 2) 
+     "Math is broken!" 
+     "Math still works.") 
+"Math still works." 
+}}}
+Clojure也提供了* if-not *语句。跟* if *的用法相同，但是作用是相反的。当逻辑为false的时候会去计算第二个参数的值，为true的时候才计算第三个参数的值。
+{{{
+user=> (if-not (= 1 1) 
+     "Math is broken!" 
+   "Math still works.") 
+"Math still works." 
+}}} 
+有时候，逻辑不仅仅只有true和false，而有多个选项时。你可能会使用嵌套的* if *，但是这里有个更简洁的形式* cond *。* cond *可以有任意个“判断/表达式”对，作为它的参数。如果满足第一个判断，就执行第一个判断对应的表达式。如果没有满足第一个条件，就会尝试后面的判断表达式，以此类推。如果一个都没有满足，那么返回* nil *除非你用一个* :else *关键字放在最后来抓住剩下的所有可能性。举个例子，让我们用* cond *来定义一个评论天气的function：
+{{{
+(defn weather-judge 
+"Given a temperature in degrees centigrade, comments on the weather." 
+[temp] 
+(cond 
+    (< temp 20) "It's cold" 
+    (> temp 25) "It's hot" 
+:else  "It's comfortable")) 
+}}}
+用下面的代码试试：
+{{{
+user=> (weather-judge 15) 
+"It's cold" 
+user=> (weather-judge 22) 
+"It's comfortable" 
+user=> (weather-judge 30) 
+"It's hot" 
+}}}
+----
+* Tip *  * cond *本来是很有用，但是大量的使用它可能会导致代码难以维护，尤其是你程序中可能出现的情况在不断的增长。其实对这种情况的更优处理方式，用* multimethods *实现多态调用，更简单，扩展性更强。在第九章有详细的讲解。
+----
