@@ -115,7 +115,7 @@ user=> (defn nth-char `[s n]`
 
 #'user/nth-char 
 
-    在java方法采取不同类型参数重载的情况下，更增加了类型提示的必要性。举个例子，String.replace方法可以接收char 或者 CharSequence参数。你不得不在三个参数上都加类型提示来避免反射。
+    在java方法采取不同类型参数重载的情况下，更增加了类型提示的必要性。举个例子，String.replace方法可以接收char 或者 `CharSequence`参数。你不得不在三个参数上都加类型提示来避免反射。
 
 user=> (defn str-replace `[#^String s a b]` 
          (.replace s a b)) 
@@ -137,7 +137,7 @@ user=> (defn str-replace `[#^String s`
     注意类型提示并非强制类型转换，它并不能把一种数据类型转换成另一种。采用错误的参数类型调用一个类型提示方法会抛出一个运行时错误：
 user=> (str-replace "Hello" \H \J) 
 
-java.lang.ClassCastException: java.lang.Character cannot be cast to java.lang.CharSequence 
+`java.lang.ClassCastException: java.lang.Character cannot be cast to java.lang.CharSequence `
 
     同样，注意一个不正确的提示类型会导致一个反射警告：
 user=> (defn str-replace `[#^String s #^Integer a #^Integer b]` 
@@ -230,19 +230,19 @@ java.lang.Integer
 --------------------
     Clojure的基本运算被定义为类型安全的，意即如果操作的结果大于返回值类型的长度，就会抛出一个错误。举个例子，下面这个循环计算2的64次方，就会抛出一个异常：
 
-`user=> (let [max (int 64) 
+`user=> (let [max (int 64) `
 
-             two (int 2)] 
+             `two (int 2)]` 
 			 
-         (loop [total (int 1), n (int 0)] 
+         `(loop [total (int 1), n (int 0)] `
 		 
-           (if (== n max) 
+           `(if (== n max) `
 		   
-               total 
+               `total `
 			   
-             (recur (* total two) (inc n))))) 
+             `(recur (* total two) (inc n))))) `
 			 
-java.lang.ArithmeticException: integer overflow `	
+`java.lang.ArithmeticException: integer overflow `	
 
     然而，某些特定的算法（比如：散列法）在整数运算中是允许悄然溢出的。Clojure提供了一系列函数用于象java算术操作一样准确执行整数运算。它们都接收Integer或者Long参数，并且支持基本类型。
 	
@@ -266,7 +266,7 @@ user=> (unchecked-divide 403 100)
 	
 *基本数组*
 ----------
-    从Clojure1.1开始，你能够为数组声明基本类型提示：Java的boolean[], char[], byte[], short[], int[], long[], float[], 和 double[]数组能被分别标识为#^booleans, #^chars, #^bytes, #^shorts, #^ints, #^longs, #^floats, and #^doubles。（同样可以采用#^objects 标识 `Object[]`）
+    从Clojure1.1开始，你能够为数组声明基本类型提示：`Java的boolean[], char[], byte[], short[], int[], long[], float[], 和 double[]数组能被分别标识为#^booleans, #^chars, #^bytes, #^shorts, #^ints, #^longs, #^floats, and #^doubles。（同样可以采用#^objects 标识 Object[]）`
 	
 	有类型提示的数组可以采用aget 和 aset进行基本类型操作，而没必要采用类型强制的注入函数比如aset-int和aset-double；实际上，这些类型强制的函数比aset在操作类型提示的数组时要更慢。对于aset来说，新添加的值必须总是正确的基本类型。对于aset和aget而言，数组的下标必须是基本类型int。在保留函数式编程方式的情况下操作基本类型数组，amap和areduce宏（Chapter10中有描述）无疑是更好更快的选择。
 	
@@ -274,29 +274,29 @@ user=> (unchecked-divide 403 100)
 --------------------
     就像你已经了解到的那样，Clojure中的数据结构是不可变且持久化的，这样就保障了在多线程中的并发安全性。但是如果你有一个明确知道只会应用于单线程中的线程又怎么样呢？是否还是需要付出不可变/持久化的性能代价呢？Clojure的答案是：不！
 	
-	Clojure1.1引入了transients，这是一个临时的、可变的且性能最优化的数据结构。当你通过一系列步骤构建一个巨大的数据结构时，它显得尤为有用。j
+	Clojure1.1引入了transients，这是一个临时的、可变的且性能最优化的数据结构。当你通过一系列步骤构建一个巨大的数据结构时，它显得尤为有用。
 	
 	transients的一个关键特性是它不用你改变代码中任何函数式编程风格。最重要的是，它并非真正给你一个可变的数据结构（如同java的collection实现类那样）让你可以肆意妄为。transients的可变特性主要在实现细节上。
 	
 	可以通过以下的例子对transients来作出最好的解释，下面的代码创建了一个map，将ASCII字符转化为对应的十进制值：
 	
-`(loop [m {}, i 0] 
+`(loop [m {}, i 0]` 
 
   (if (> i 127) 
   
     m 
 	
-    (recur (assoc m (char i) i) (inc i)))) `
+    `(recur (assoc m (char i) i) (inc i)))) `
 	
 	以下是采用transients循环的同样实现：
 	
-`(loop [m (transient {}), i 0] 
+`(loop [m (transient {}), i 0] `
 
   (if (> i 127) 
   
     (persistent! m) 
 	
-    (recur (assoc! m (char i) i) (inc i)))) `
+    `(recur (assoc! m (char i) i) (inc i)))) `
 	
 	注意那些非常细小的改动。这个例子展示了采用transients所需的三处代码改动：
 	* 采用transient函数初始化一个transient版本的数据结构。transient函数支持Vectors, hash maps, 和 hash sets。
@@ -307,15 +307,15 @@ user=> (unchecked-divide 403 100)
 	
 	记住，transients并非如同java collection般的可变数据结构。就像持久化数据结构一样，你必须采用任何函数的返回值来做为改变了的数据结构。下面这个指令式的代码是不会生效的：
 	
-`;; bad code! 
+`;; bad code! `
 
-(let [m (transient {})] 
+`(let [m (transient {})] `
 
-  (dotimes [i 127] 
+ ` (dotimes [i 127] `
   
-    (assoc! m (char i) i)) 
+    `(assoc! m (char i) i)) `
 	
-  (persistent! m)) `
+  `(persistent! m)) `
   
     dotimes宏创建一个指令式的循环，在每次迭代中，assoc!的返回值被丢弃了。这段代码的实际结果是无法预测的，但通常都是错的。
 	
@@ -330,11 +330,11 @@ user=> (unchecked-divide 403 100)
 ----------
     每次你使用一个Var时，Clojure就会去找到这个Var的值。如果你在循环中重复使用同一个Var，寻值的过程就会大大拖慢代码。为了避免这种性能问题，采用let在循环的范围中把Var的值绑定到本地，如同以下例子：
 	
-`(def *var* 100) 
+`(def *var* 100)` 
 
-(let [value *var*] 
+`(let [value *var*] `
 
-  ... loop using value instead of *var* ...) `
+`  ... loop using value instead of *var* ...) `
   
     采用这个技术需要注意的是：它并非总能带来性能提升，而且在未来的发布版本中可能变得不必要。
 	
@@ -358,13 +358,13 @@ user=> (unchecked-divide 403 100)
 	
 	做为替代，Clojure提供了definline。definline看起来功能跟defmacro一样：它的主体会返回一个代表代码已经被编译过的数据结构。不同于defmacro的是，它会创建一个可以象普通函数那样到处被使用的真正函数。下面是例子：
 	
-`;; a normal function: 
+`;; a normal function: `
 
-(defn square [x] (* x x))
+`(defn square [x] (* x x))`
  
-;; an inlined function: 
+`;; an inlined function: `
 
-(definline square2 [x] `(* ~x ~x)) `
+`(definline square2 [x] `(* ~x ~x)) `
 
     在Clojure中，definline被标记为”实验性“的。它的存在主要是为了解决函数无法接受基本类型参数或者无法返回基本类型值的问题。当函数对基本类型的支持特性被添加后，JVM会自动内嵌你的代码，而definline将变得不必要。
 	
