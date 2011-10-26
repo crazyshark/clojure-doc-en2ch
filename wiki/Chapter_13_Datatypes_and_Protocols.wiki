@@ -104,16 +104,16 @@ user=> (dissoc x :iq)
 	在使用defrecord创建一个数据类型时，你能够应用方法来实现任意数量的协议。语法如下：
 {{{
 (defrecord name [fields...] 
-  `SomeProtocol` 
+  SomeProtocol 
     (method-one [args] ... method body ...) 
     (method-two [args] ... method body ...) 
-  `AnotherProtocol` 
+  AnotherProtocol 
     (method-three [args] ... method body ...))
 }}}	
 	你可以在字段vector后面挂接任意数量的协议和方法。每个方法实现拥有跟对应协议中一样的参数数量。而数据类型的实例字段在方法内部跟方法的局部变量同样有效，直接使用名字就可以调用。
 {{{
 (defrecord name [x y z] 
-  `SomeProtocol` 
+  SomeProtocol 
   (method-one [args] 
     ...do stuff with x, y, and z...))
 }}}	
@@ -168,11 +168,11 @@ user> (Point. 1 5)
 -----------------------
 	有时你或者需要创建一个新的协议来操作一个已存在的数据类型。假设现在你无法修改defrecord定义的源代码。你仍然可以采用extend函数扩展协议来支持那个数据类型：
 {{{
-`(extend DatatypeName` 
-  `SomeProtocol`   
+(extend DatatypeName 
+  SomeProtocol   
     {:method-one (fn [x y] ...) 	
      :method-two existing-function} 	 
-  `AnotherProtocol`   
+  AnotherProtocol   
     {...})
 }}}	
 	extend接收一个数据类型名，后面紧跟任意数量的成对协议/方法map。方法map就是个普通map，方法名是key，关联到方法实现。方法实现可以是fn创建的匿名函数或者已存在函数的标识名。
@@ -182,26 +182,26 @@ user> (Point. 1 5)
 (def defaults 
      {:method-one (fn [x y] ...) 
       :method-two (fn [] ...)}) 	  
-`(extend DefaultType` 
-  `SomeProtocol`   
+(extend DefaultType 
+  SomeProtocol   
     defaults) 	
-`(extend AnotherType` 
-  `SomeProtocol`   
+(extend AnotherType 
+  SomeProtocol   
     (assoc defaults :method-two (fn ...)))
 }}}
 	有两个便利的宏能够简化扩展语法，extend-type和extend-protocol。当你想要使用同一数据类型实现多个协议时，采用extend-type；当你想要使用多个数据类型实现同一协议时，采用extend-protocol。
 {{{
-`(extend-type DatatypeName` 
-  `SomeProtocol`   
+(extend-type DatatypeName 
+  SomeProtocol   
     (method-one [x] ... method body ...) 	
     (method-two [x] ...) 	
-  `AnotherProtocol`   
+  AnotherProtocol   
     (method-three [x] ...))  
-`(extend-protocol SomeProtocol` 
-  `SomeDatatype`   
+(extend-protocol SomeProtocol 
+  SomeDatatype   
      (method-one [x] ...) 	 
      (method-two [x y] ...) 	 
-  `AnotherType`   
+  AnotherType   
      (method-one [x] ...) 	 
      (method-two [x y] ...))
 }}}
@@ -220,10 +220,10 @@ user> (Point. 1 5)
 	有时你需要一个实现了某一协议或者接口的对象，但是你确实不想创建一个命名的数据类型。Clojure1.2通过reify宏来支持这点：
 {{{
 (reify 
-  `SomeProtocol`   
+  SomeProtocol   
     (method-one [] ...) 	
     (method-two [y] ...) 	
-  `AnotherProtocol`   
+  AnotherProtocol   
     (method-three [] ...)) 
 }}}	
 	reify的语法和defrecord非常相似，除了字段vector。同样地，象defrecord一样，reify可以继承java 接口或者java.lang.Object的方法。
@@ -267,10 +267,10 @@ user> (str thing)
 }}}  
 	然后有两种类型的雇员：钟点工（“hourly” employees）根据小时拿钱，而正式工（“salaried” employees）每月领取固定的一份薪水，而不管他们工作了多少个小时：
 {{{
-`(defrecord HourlyEmployee [name rate] 
+(defrecord HourlyEmployee [name rate] 
   Payroll   
-  (paycheck [hrs] (* rate hrs)))`  
-`(defrecord SalariedEmployee [name salary] 
+  (paycheck [hrs] (* rate hrs)))  
+(defrecord SalariedEmployee [name salary] 
   Payroll   
   (paycheck [hrs] (/ salary 12.0)))
 }}}
@@ -278,8 +278,8 @@ user> (str thing)
 
 	现在你能够定义一些雇员并计算他们的薪水了：
 {{{
-user=> `(def emp1 (HourlyEmployee. "Devin" 12))` 
-user=> `(def emp2 (SalariedEmployee. "Casey" 30000))` 
+user=> (def emp1 (HourlyEmployee. "Devin" 12)) 
+user=> (def emp2 (SalariedEmployee. "Casey" 30000)) 
 user=> (paycheck emp1 105) 
 1260 
 user=> (paycheck emp2 120) 
@@ -302,9 +302,9 @@ user=> (paycheck con1 80)
 	defrecord定义的数据类型在存储结构化数据上面非常有用，但是根本上而言，它们总是表现得象map。如果你希望定义一个彻底全新的类型，表现得完全不像map，那么就采用deftype来代替defrecord。deftype是个defrecord的“低层次”版本。
 {{{
 (deftype name [fields...] 
-  `SomeProtocol`   
+  SomeProtocol   
     (some-method [this x y] ...) 	
-  `SomeInterface`   
+  SomeInterface   
     (aMethod [this] ...))
 }}}	
 	deftype的语法基本和defrecord一样，但是deftype不会为你创建任何默认的方法实现。你必须自己实现所有的方法，包括标准对象方法比如equals 和 hashCode。deftype创建一个“空”的java 类；这个类旨在允许以Clojure的方式重定义核心数据结构，比如vectors 或者 maps。
