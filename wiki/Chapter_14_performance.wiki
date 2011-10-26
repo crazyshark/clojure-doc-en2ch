@@ -307,7 +307,7 @@ user=> (unchecked-divide 403 100)
 `;; a normal function:` 
 `(defn square [x] (* x x))` 
 `;; an inlined function:` 
-`(definline square2 [x] `(* ~x ~x)) `
+`(definline square2 [x] (* ~x ~x)) `
 </code>
     在Clojure中，definline被标记为”实验性“的。它的存在主要是为了解决函数无法接受基本类型参数或者无法返回基本类型值的问题。当函数对基本类型的支持特性被添加后，JVM会自动内嵌你的代码，而definline将变得不必要。
 	
