@@ -26,7 +26,7 @@
 ===采用Time进行简单性能测试===
 ------------------------------
     Clojure拥有一个内建的简单性能测试工具，time宏。time接受一个简单表达式，分析它，然后打印出执行表达式将耗费多少毫秒：
-<code>
+<code language="Clojure">
 user=> (time (reduce + (range 100))) 
 "Elapsed time: 1.005 msecs" 
 4950 
