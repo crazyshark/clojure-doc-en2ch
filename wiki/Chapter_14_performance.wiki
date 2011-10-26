@@ -185,7 +185,7 @@ java.lang.Integer
 
     在采用基本类型操作时，数值字面量同样也会被强制转换为基本类型。举个例子，下面的代码计算了1到100整数的和：
 <code>
-(let `[max (int 100)]`
+(let `[max (int 100)]` 
   (loop `[`sum (int 0) 
          i (int 1)`]` 
     (if (> i max) 
@@ -198,7 +198,7 @@ java.lang.Integer
 --------------------
     Clojure的基本运算被定义为类型安全的，意即如果操作的结果大于返回值类型的长度，就会抛出一个错误。举个例子，下面这个循环计算2的64次方，就会抛出一个异常：
 <code>
-`user=> (let [max (int 64) `
+`user=> (let [max (int 64)` 
              `two (int 2)]` 			 
          `(loop [total (int 1), n (int 0)] `		 
            `(if (== n max) `		   
