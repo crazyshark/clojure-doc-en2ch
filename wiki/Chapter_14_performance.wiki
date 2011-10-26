@@ -91,7 +91,7 @@ user=> (set! `*warn-on-reflection*` true)
 true 
 user=> (defn nth-char `[`s n`]` 
          (.charAt s n)) 
-Reflection warning - call to charAt can't be resolved. 
+Reflection warning - call to charAt can\'t be resolved. 
 </code>
     只要在调用的方法中对符号添加类型提示，这个警告通常就被消除掉了。对函数的参数或者采用let的本地绑定都有效果。
 <code>
