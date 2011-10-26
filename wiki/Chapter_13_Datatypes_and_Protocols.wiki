@@ -290,7 +290,7 @@ user=> (paycheck emp2 120)
 (defn contract [amount] 
   (reify Payroll (paycheck [hrs] amount)))
 }}} 
-    就像下面例子展示的那样:
+        就像下面例子展示的那样:
 {{{
 user=> (def con1 (contract 5000)) 
 user=> (paycheck con1 80) 
