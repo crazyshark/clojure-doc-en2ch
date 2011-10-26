@@ -125,7 +125,7 @@ user=> (str-replace "Hello" \H \J)
 <code>
 user=> (defn str-replace `[#^String s #^Integer a #^Integer b]` 
          (.replace s a b)) 
-Reflection warning - call to replace can't be resolved. 
+`Reflection warning - call to replace can't be resolved. `
 #'user/str-replace 
 </code>
     你可以在函数定义时为Var加一个类型标记，为函数的返回值做类型提示。这在任何Var上都起作用，包括那些做为全局值使用的。
