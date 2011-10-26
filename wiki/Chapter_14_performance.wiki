@@ -1,7 +1,6 @@
 #summary Practical Clojure Chapter 14 Performance.
-
 = Chapter 14 性能 =
-
+<wiki:toc max_depth="3" />
     在原理上，Clojure能够跟java一样快:两者都是编译成java字节码，运行在java虚拟机上面。Clojure的设计小心地避免了某些特性－－比如连等式，或者类似Common Lisp的条件系统－－这些在jvm上面会严重地危害性能。但Clojure始终是一门年青的语言，并没有耗费成千上万小时去优化编译器。这样的结果是，Clojure的代码通常比等价的java代码运行得要慢些。然而，通过某些细
 微的调整，Clojure的性能表现能被带到接近java的水平。不要忘记java从代码层面来说，在性能临界上的表现总是可靠的。
 
