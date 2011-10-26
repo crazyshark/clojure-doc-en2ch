@@ -247,7 +247,6 @@ user => (println map-result)
 
 <code language="clj">
 (defn lazy-counter `[base increment`]
-
      (lazy-seq
           (cons base (lazy-counter (+ base increment) increment))))
 </code>
