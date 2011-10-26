@@ -39,7 +39,6 @@ user=> (time (reduce + (range 100)))
 user=> (time (dotimes `[`i 100000`]` 
                (reduce + (range 100)))) 
 "Elapsed time: 252.594 msecs" 
-
 nil 
 </code>
     然而，这依然不能统观全貌，因为JVM可能在执行循环的过程中就对计算进行了优化。多次重复循环就能得到一个更加精确的结果：
@@ -48,13 +47,9 @@ user=> (dotimes `[`j 5`]`
          (time (dotimes `[`i 100000`]` 
                  (reduce + (range 100))))) 
 "Elapsed time: 355.759 msecs" 
-
 "Elapsed time: 239.404 msecs" 
-
 "Elapsed time: 217.362 msecs" 
-
 "Elapsed time: 221.168 msecs" 
-
 "Elapsed time: 217.753 msecs"
 </code>
     如同你看到的那样，在这个例子中，数次迭代的执行时间基本上在220毫秒上下波动。这种模式就是JVM的特点。
