@@ -245,7 +245,7 @@ user=> (unchecked-divide 403 100)
 </code>	
 	以下是采用transients循环的同样实现：
 <code>	
-`(loop [m (transient {}), i 0] `
+`(loop [m (transient {}), i 0]` 
   (if (> i 127) 
     (persistent! m) 	
     `(recur (assoc! m (char i) i) (inc i)))) `
@@ -259,10 +259,10 @@ user=> (unchecked-divide 403 100)
 	
 	记住，transients并非如同java collection般的可变数据结构。就像持久化数据结构一样，你必须采用任何函数的返回值来做为改变了的数据结构。下面这个指令式的代码是不会生效的：
 <code>	
-`;; bad code! `
-`(let [m (transient {})] `
- ` (dotimes [i 127] `
-    `(assoc! m (char i) i)) `	
+`;; bad code!` 
+`(let [m (transient {})]` 
+ ` (dotimes [i 127]` 
+    `(assoc! m (char i) i))` 	
   `(persistent! m)) `
 </code>  
     dotimes宏创建一个指令式的循环，在每次迭代中，assoc!的返回值被丢弃了。这段代码的实际结果是无法预测的，但通常都是错的。
@@ -279,7 +279,7 @@ user=> (unchecked-divide 403 100)
     每次你使用一个Var时，Clojure就会去找到这个Var的值。如果你在循环中重复使用同一个Var，寻值的过程就会大大拖慢代码。为了避免这种性能问题，采用let在循环的范围中把Var的值绑定到本地，如同以下例子：
 <code>	
 `(def *var* 100)` 
-`(let [value *var*] `
+`(let [value *var*]` 
 `  ... loop using value instead of *var* ...) `
 </code>  
     采用这个技术需要注意的是：它并非总能带来性能提升，而且在未来的发布版本中可能变得不必要。
@@ -304,9 +304,9 @@ user=> (unchecked-divide 403 100)
 	
 	做为替代，Clojure提供了definline。definline看起来功能跟defmacro一样：它的主体会返回一个代表代码已经被编译过的数据结构。不同于defmacro的是，它会创建一个可以象普通函数那样到处被使用的真正函数。下面是例子：
 <code>	
-`;; a normal function: `
-`(defn square [x] (* x x))`
-`;; an inlined function: `
+`;; a normal function:` 
+`(defn square [x] (* x x))` 
+`;; an inlined function:` 
 `(definline square2 [x] `(* ~x ~x)) `
 </code>
     在Clojure中，definline被标记为”实验性“的。它的存在主要是为了解决函数无法接受基本类型参数或者无法返回基本类型值的问题。当函数对基本类型的支持特性被添加后，JVM会自动内嵌你的代码，而definline将变得不必要。
