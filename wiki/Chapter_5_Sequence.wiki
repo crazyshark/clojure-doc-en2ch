@@ -36,8 +36,7 @@ user=> (rest mylist)
 序列函数是非常有用的。举个例子，只需要`first`和`rest`（还需要另一个函数，`empty?`，如果一个序列为空则放回true）就能实现一个Lisp中极为常见的惯用语：递归遍历一个list的函数。但是，因为你使用的是序列，除了list，你可以遍历任何数据集合。
 
 <code language="clj">
-(defn printall `[s]`
-
+(defn printall `[s`]
     (if (not (empty? s))
         (do
             (println (str "Item: " (first s)))
@@ -139,10 +138,8 @@ user=> (cons 1 nil)
 接下来是另一个很常见的Lisp惯用法，使用`cons`或者`conj`来递归地构建一个list。下面的这个函数展示了使用从1到用户输入的参数之间的所有整数来递归构造的一个序列：
 
 <code language="clj">
-(defn make-int-seq `[max]`
-
-     (loop `[acc nil n max]`
-
+(defn make-int-seq `[max`]
+     (loop `[acc nil n max`]
           (if (zero? n)
           acc
           (recur (cons n acc) (dec n)))))
@@ -169,8 +166,7 @@ user=> (make-int-seq 5)
 
 <code language="clj">
 user => (map
-                (fn `[x] (* x x))`
-
+                (fn `[x`] (* x x))
                 '(1 2 3 4 5 6 7))
 (1 4 9 16 25 36 49)
 </code>
@@ -180,8 +176,7 @@ user => (map
 为了看到延迟加载序列的内部工作情况，让我们向你的平方方程添加一点附带的功能（side effect），这样你就能看到运算是什么时候发生的（一般来说，在传递给`map`的函数中添加副作用不是一个好的设计实践，但是在这里这样做能展示延迟加载的一些细节）。在新的平方函数中，你会在每个参数的值被处理的时候将其打印出来。让我们把事情简化一点，用`defn`而不是以内联的形式将这个新函数传递给`map`：
 
 <code language="clj">
-(defn square `[x]`
-
+(defn square `[x`]
     (do
       (println (str "Processing: " x))
       (* x x)))
@@ -251,7 +246,7 @@ user => (println map-result)
 举个例子，下面这个函数通过设置一个基准值，然后不断地把另一个数值加给它，以构造一个延迟加载序列。
 
 <code language="clj">
-(defn lazy-counter `[base increment]`
+(defn lazy-counter `[base increment`]
 
      (lazy-seq
           (cons base (lazy-counter (+ base increment) increment))))
@@ -276,9 +271,8 @@ user=> (nth (lazy-counter 2 3) 1000000)
 可以把它跟非延迟加载的版本比较一下：
 
 <code language="clj">
-(defn counter `[base increment]`
-
-(cons base (counter (+ base increment) increment)))
+(defn counter `[base increment`]
+     (cons base (counter (+ base increment) increment)))
 </code>
 
 这个函数甚至还没开始真正运行就失败了。它几乎立即就在`StackOverflowError`面前倒下了。因为它没有推迟任何运算，它总是立即选择递归直至将JVM中的栈空间耗尽。延迟加载的版本不会有这个问题。虽然它也是以递归的方式定义的，但是，只有当处理延迟加载学列的内部代码准备好展开下一个值得时候，`lazy-seq`中包含的内容才会被执行。这样做不会消耗栈空间，所以延迟加载序列可以做到即十分高效，又能在逻辑上达到长度无限。
@@ -305,10 +299,8 @@ user=> (take 10 integers)
 通过提供一个特定的函数，`iterate`可以用来提供与之前提到的`lazy-counter`函数完全相同的功能：
 
 <code language="clj">
-(defn lazy-counter-iterate `[base increment]`
-
-           (iterate (fn `[n] (+ n increment)) base))`
-
+(defn lazy-counter-iterate `[base increment`]
+           (iterate (fn `[n`] (+ n increment)) base))
 user=> (nth (lazy-counter-iterate 2 3) 1000000)
 3000002
 </code>
