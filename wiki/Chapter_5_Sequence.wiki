@@ -312,8 +312,10 @@ user=> (nth (lazy-counter-iterate 2 3) 1000000)
 3000002
 </code>
 
-还有几个与`iterate`功能相似的函数：请查看“序列API”章节。
+还有几个与`iterate`功能相似的函数：请查看[Chapter_5_Sequence#序列API]章节。
 
 ===延迟加载序列和内存管理===
+
+
 
 =序列API=
