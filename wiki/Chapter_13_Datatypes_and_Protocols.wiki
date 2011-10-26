@@ -17,10 +17,10 @@
 
 	采用defprotocol来创建协议：
 {{{
-`(defprotocol MyProtocol` 
-`  "This is my new protocol"` 
-`  (method-one [x] "This is the first method.")` 
-`  (method-two ([x] [x y]) "The second method."))` 
+(defprotocol MyProtocol 
+  "This is my new protocol" 
+  (method-one [x] "This is the first method.") 
+  (method-two ([x] [x y]) "The second method."))
 }}}
 	如果你在my.code命名空间中执行这个例子，将创建如下的变量：
         *  `my.code/MyProtocol:`  一个协议对象.
@@ -37,9 +37,9 @@
 	在概念上，协议同java 中的接口很类似。实际上，defprotocol 创建了一个包含协议中方法声明的java 接口。你可以采用AOT-compile的方式编译包含协议定义的Clojure源文件，然后在java代码中把它做为接口使用。而这个接口的包会对应协议中的命名空间。包、接口、方法的名称都会遵从java 命名规则，比如会把“-”替换为`“_”`。如果协议中的方法有一个或者多个参数，接口中对应的方法都只会拥有一个参数：一个指针参数。之前的例子会创建一个接口对应下面的java 代码：
 {{{
 package my.code;  
-`public interface MyProtocol{` 
-`    public Object method_one();` 
-`    public Object method_two(Object y);` 
+public interface MyProtocol{ 
+    public Object method_one(); 
+    public Object method_two(Object y); 
 }
 }}}
 	在协议和接口之间有一个最重要的差别：协议不能继承。你不能象在java 中创建子接口那样创建“子协议”。
@@ -57,8 +57,9 @@ package my.code;
 	`StructMaps`也曾经是一种解决方案，但同样拥有很多问题。`StructMaps`拥有一个关键字（key）的预定义集合，却没有运行时需要的实际“类型”。`StructMaps`不能被打印，也不能重复，也不能拥有基本类型的字段，最后，还比不上POJO中实例字段的性能。
 	
 	Clojure1.2 中引入了数据类型做为`StructMaps`的替代方案。一个数据类型代表一条有名字的记录类型，拥有一个已命名字段的集合，可以是协议或者接口的实现。采用defrecord来创建数据类型：
-(defrecord name `[fields...]`)
-
+{{{
+(defrecord name [fields...])
+}}}
 	举个例子，一个数据类型能够存储一条包含两个字段，name 和 room number，的employee记录：
 {{{
 user> (defrecord Employee `[name room]`)
