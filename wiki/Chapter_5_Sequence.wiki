@@ -252,6 +252,7 @@ user => (println map-result)
 
 <code language="clj">
 (defn lazy-counter `[base increment]`
+
      (lazy-seq
           (cons base (lazy-counter (+ base increment) increment))))
 </code>
@@ -275,7 +276,8 @@ user=> (nth (lazy-counter 2 3) 1000000)
 可以把它跟非延迟加载的版本比较一下：
 
 <code language="clj">
-(defn counter [base increment]
+(defn counter `[base increment]`
+
 (cons base (counter (+ base increment) increment)))
 </code>
 
@@ -288,3 +290,30 @@ user=> (nth (lazy-counter 2 3) 1000000)
 ----
 
 ===使用序列产生函数来构造延迟加载序列===
+
+许多需要延迟加载序列的常见情况中，使用序列产生函数（sequence generator function）通常会比直接使用`lazy-seq`更为简便。`iterate`函数就是特别有用的。它通过将序列中之前的一个项作为输入参数调用提供的函数，把得到的值作为下一个项，以产生一个无限长的序列。它需要两个输入参数：用来调用的函数和序列中第一个项。
+
+比如，把`iterate`和内建的递增函数`inc`联合起来生成一个所有整数组成的无限长延迟加载序列：
+
+<code language="clj">
+user=> (def integers (iterate inc 0))
+#'user/integers
+user=> (take 10 integers)
+(0 1 2 3 4 5 6 7 8 9)
+</code>
+
+通过提供一个特定的函数，`iterate`可以用来提供与之前提到的`lazy-counter`函数完全相同的功能：
+
+<code language="clj">
+(defn lazy-counter-iterate `[base increment]`
+
+           (iterate (fn [n] (+ n increment)) base))
+user=> (nth (lazy-counter-iterate 2 3) 1000000)
+3000002
+</code>
+
+还有几个与`iterate`功能相似的函数：请查看“序列API”章节。
+
+===延迟加载序列和内存管理===
+
+=序列API=
