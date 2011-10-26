@@ -72,7 +72,6 @@ user=> (dotimes `[`j 5`]`
     Clojure内建支持备忘的函数是memoize，它接收一个函数做为参数，返回这个函数的备忘版本:
 <code>
 (defn really-slow-function `[`x y z`]` ...) 
-
 (def faster-function (memoize really-slow-function)) 
 </code>
     备忘是一个牺牲内存加速执行的经典例子。如果一个函数需要花费比哈希表寻址更多的时间去计算结果，而且它又经常以同样的输入参数被调用，那么采用备忘就是一种好的候选方案。只有纯函数－－意即针对特定输入总是返回同样结果的函数－－能够进行备忘。
@@ -89,94 +88,65 @@ user=> (dotimes `[`j 5`]`
     为了找出一个方法是反射调用还是不是，设置编译器属性`*warn-on-reflection*`为真，然后，执行代码，如果遇到反射调用，Clojure的编译器就会打印出一条警告信息。
 <code>
 user=> (set! `*warn-on-reflection*` true) 
-
 true 
-
 user=> (defn nth-char `[`s n`]` 
          (.charAt s n)) 
-
 Reflection warning - call to charAt can't be resolved. 
 </code>
     只要在调用的方法中对符号添加类型提示，这个警告通常就被消除掉了。对函数的参数或者采用let的本地绑定都有效果。
 <code>
 ;; No reflection warnings: 
-
 user=> (defn nth-char `[`#^String s n`]` 
          (.charAt s n)) 
-
 #'user/nth-char 
-
 user=> (defn nth-char `[s n]` 
          (let `[#^String st s]` 
 (.charAt st n))) 
-
 #'user/nth-char 
 </code>
     在java方法采取不同类型参数重载的情况下，更增加了类型提示的必要性。举个例子，String.replace方法可以接收char 或者 `CharSequence`参数。你不得不在三个参数上都加类型提示来避免反射。
 <code>
 user=> (defn str-replace `[#^String s a b]` 
          (.replace s a b)) 
-
 Reflection warning - call to replace can't be resolved. 
-
 #'user/str-replace 
-
 user=> (defn str-replace `[#^String s` 
-
                          `#^CharSequence a` 
-
                          `#^CharSequence b]` 
-
          (.replace s a b)) 
-
 #'user/str-replace
 </code>
     注意类型提示并非强制类型转换，它并不能把一种数据类型转换成另一种。采用错误的参数类型调用一个类型提示方法会抛出一个运行时错误：
 <code>
 user=> (str-replace "Hello" \H \J) 
-
 `java.lang.ClassCastException: java.lang.Character cannot be cast to java.lang.CharSequence `
-
+</code>
     同样，注意一个不正确的提示类型会导致一个反射警告：
+<code>
 user=> (defn str-replace `[#^String s #^Integer a #^Integer b]` 
          (.replace s a b)) 
-
 Reflection warning - call to replace can't be resolved. 
-
 #'user/str-replace 
 </code>
     你可以在函数定义时为Var加一个类型标记，为函数的返回值做类型提示。这在任何Var上都起作用，包括那些做为全局值使用的。
 <code>
 user=> (defn greeting `[]` "Hello, World!")  ;; no type hint 
-
 #'user/greeting 
-
 user=> (.length (greeting)) 
-
 Reflection warning - reference to field length can't be resolved. 
-
 13 
-
 user=> (defn #^String greeting `[]` "Hello, World!") 
-
 #'user/greeting 
-
 user=> (.length (greeting))  ;; no reflection warning 
-
 13 
-
 user=> (defn greeting {:tag String} `[]` "Hello, World!") ;; same as above 
 </code>
     在极少的情况下，符号的类型提示都无法有效地避免反射。在这样的情况下，你可以为整个表达式加上类型提示：
 <code>
 user=> (.length (identity "Hello, World!")) 
-
 Reflection warning - reference to field length can't be resolved. 
-
 13 
-
 user=> (.length #^String (identity "Hello, World!")) 
-
 13 
 </code>
     Clojure的编译器在跟踪对象类型上面非常聪明。比如，java方法的返回类型总是能够被获知而无须类型提示。只要给予少少的提示，编译器就能够推演出大部分所需的其他类型信息。一般而言，你应该先写出没有任何类型提示的代码，然后打开`*warn-on-reflection*`参数，仅仅在需要提升性能的地方加上类型提示。
@@ -189,7 +159,6 @@ user=> (.length #^String (identity "Hello, World!"))
     在Clojure中，一切都是对象，所以数字总是被装箱过的。这个可以在检查简单算术的结果时看到：
 <code>
 user=> (class (+ 1 1)) 
-
 java.lang.Integer 
 </code>
     然而，在JVM中，操作装箱的数字比不装箱的基本类型要来得慢。所以，在数学计算密集的应用中，采用装箱数字的Clojure代码要比直接采用基本类型的java代码要慢一些。
@@ -202,9 +171,7 @@ java.lang.Integer
   (loop `[a (int a), b (int b)]` 
     (cond (zero? a) b 
           (zero? b) a 
-
           (> a b) (recur (- a b) b) 
-
           :else (recur a (- b a))))) 
 </code>
     在初始化loop的vector时，参数被强制转换成int。这个版本比不采用基本类型的版本大约要快12倍。但是，请注意！假设你采用mod（模计算）函数来实现同样的算法，采用基本类型的代码会更慢。因为Clojure函数（除了运算函数）的参数总是会自动装箱。因此，当使用循环中基本类型时，你应该仅调用以下的基本类型识别函数：
@@ -232,17 +199,11 @@ java.lang.Integer
     Clojure的基本运算被定义为类型安全的，意即如果操作的结果大于返回值类型的长度，就会抛出一个错误。举个例子，下面这个循环计算2的64次方，就会抛出一个异常：
 <code>
 `user=> (let [max (int 64) `
-
-             `two (int 2)]` 
-			 
-         `(loop [total (int 1), n (int 0)] `
-		 
-           `(if (== n max) `
-		   
-               `total `
-			   
-             `(recur (* total two) (inc n))))) `
-			 
+             `two (int 2)]` 			 
+         `(loop [total (int 1), n (int 0)] `		 
+           `(if (== n max) `		   
+               `total `			   
+             `(recur (* total two) (inc n)))))`			 
 `java.lang.ArithmeticException: integer overflow `	
 </code>
     然而，某些特定的算法（比如：散列法）在整数运算中是允许悄然溢出的。Clojure提供了一系列函数用于象java算术操作一样准确执行整数运算。它们都接收Integer或者Long参数，并且支持基本类型。
@@ -250,17 +211,13 @@ java.lang.Integer
 	以下这些函数都有整型溢出的倾向：unchecked-add, unchecked-subtract,unchecked-multiply, unchecked-negate, unchecked-inc, 和 unchecked-dec。
 <code>	
 user=> (unchecked-inc Integer/MAX_VALUE) 
-
 -2147483648 
-
 user=> (unchecked-negate Integer/MIN_VALUE) 
-
 -2147483648 
-
+</code>
     unchecked-divide 和 unchecked-remainder函数会把结果截断为整型。
-	
+<code>	
 user=> (unchecked-divide 403 100) 
-
 4 
 </code>
     无类型检查的操作在使用循环基本类型时，比标准的算术函数要稍快一些。但是，在你使用无类型检查的函数前，要先想好能否接受没有安全检查所导致的结果。
@@ -282,21 +239,15 @@ user=> (unchecked-divide 403 100)
 	可以通过以下的例子对transients来作出最好的解释，下面的代码创建了一个map，将ASCII字符转化为对应的十进制值：
 <code>	
 `(loop [m {}, i 0]` 
-
   (if (> i 127) 
-  
-    m 
-	
+    m 	
     `(recur (assoc m (char i) i) (inc i)))) `
 </code>	
 	以下是采用transients循环的同样实现：
 <code>	
 `(loop [m (transient {}), i 0] `
-
   (if (> i 127) 
-  
-    (persistent! m) 
-	
+    (persistent! m) 	
     `(recur (assoc! m (char i) i) (inc i)))) `
 </code>	
 	注意那些非常细小的改动。这个例子展示了采用transients所需的三处代码改动：
@@ -309,13 +260,9 @@ user=> (unchecked-divide 403 100)
 	记住，transients并非如同java collection般的可变数据结构。就像持久化数据结构一样，你必须采用任何函数的返回值来做为改变了的数据结构。下面这个指令式的代码是不会生效的：
 <code>	
 `;; bad code! `
-
 `(let [m (transient {})] `
-
  ` (dotimes [i 127] `
-  
-    `(assoc! m (char i) i)) `
-	
+    `(assoc! m (char i) i)) `	
   `(persistent! m)) `
 </code>  
     dotimes宏创建一个指令式的循环，在每次迭代中，assoc!的返回值被丢弃了。这段代码的实际结果是无法预测的，但通常都是错的。
@@ -332,9 +279,7 @@ user=> (unchecked-divide 403 100)
     每次你使用一个Var时，Clojure就会去找到这个Var的值。如果你在循环中重复使用同一个Var，寻值的过程就会大大拖慢代码。为了避免这种性能问题，采用let在循环的范围中把Var的值绑定到本地，如同以下例子：
 <code>	
 `(def *var* 100)` 
-
 `(let [value *var*] `
-
 `  ... loop using value instead of *var* ...) `
 </code>  
     采用这个技术需要注意的是：它并非总能带来性能提升，而且在未来的发布版本中可能变得不必要。
@@ -360,11 +305,8 @@ user=> (unchecked-divide 403 100)
 	做为替代，Clojure提供了definline。definline看起来功能跟defmacro一样：它的主体会返回一个代表代码已经被编译过的数据结构。不同于defmacro的是，它会创建一个可以象普通函数那样到处被使用的真正函数。下面是例子：
 <code>	
 `;; a normal function: `
-
 `(defn square [x] (* x x))`
- 
 `;; an inlined function: `
-
 `(definline square2 [x] `(* ~x ~x)) `
 </code>
     在Clojure中，definline被标记为”实验性“的。它的存在主要是为了解决函数无法接受基本类型参数或者无法返回基本类型值的问题。当函数对基本类型的支持特性被添加后，JVM会自动内嵌你的代码，而definline将变得不必要。
