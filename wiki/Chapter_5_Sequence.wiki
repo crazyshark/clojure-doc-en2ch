@@ -352,10 +352,10 @@ Clojure提供了一整套操纵序列的函数。熟悉他们，了解他们的�
    `seq`函数需要一个collection作为输入参数，返回这个collection的一个序列表象（a sequence representaion）。大多数序列操纵函数都隐式地在他们的输入参数上调用`seq`，所以他们可以接受各种collection，而不用手动地去调用`seq`。
 
 <code language="clj">
-user=> (seq [1 2 3 4 5])
+user=> (seq `[1 2 3 4 5`])
 (1 2 3 4 5)
 user=> (seq {:a 1 :b 2 :c 3})
-([:a 1] [:b 2] [:c 3])
+(`[:a 1`] `[:b 2`] `[:c 3`])
 </code>
 
  * vals
@@ -378,12 +378,12 @@ user=> (keys {:key1 "value1" :key2 "value2" :key3 "value3"})
    `rseq`需要一个输入参数，这个参数只能是一个vector或者是一个sorted map。它返回一个由他们的值逆向排列组成的序列，这个操作执行的时间是常量值。
 
 <code language="clj">
-user=> (rseq [1 2 3 4])
+user=> (rseq `[1 2 3 4`])
 (4 3 2 1)
 </code>
 
  * lazy-seq
-   `lazy-seq`作为一个宏，用来包裹一个返回序列的form。他产生一个延迟加载的序列，在前一节“直接构建延迟加载的序列”中已经详细讨论过了。
+   `lazy-seq`作为一个宏，用来包裹一个返回序列的form。它产生一个延迟加载的序列，在前一节“直接构建延迟加载的序列”中已经详细讨论过了。
 
  * repeatedly
    `repeatedly`需要一个输入参数，一个不能有输入参数的函数，返回由不断调用这个函数得到的返回值组成的延迟加载的序列。需要注意一点，如果这个函数是一个纯函数（pure function），它每次都会返回相同的值，因为它没有输入参数。
@@ -507,20 +507,20 @@ user=> (mapcat (fn `[x`] (repeat 3 x)) [1 2 3])
    
    这个例子中，提供的函数返回一个由三个输入参数组成的序列。`mapcat`将函数应用到剩下这些序列或collection之后再将它们连接起来。
 
+ * cycle
+   `cycle`需要一个序列/collection作为输入参数，返回一个延迟加载序列，由反复地重复这个序列或collection中的值组成。
+
 <code language="clj">
 user=> (take 10 (cycle `[:a :b :c`]))
 (:a :b :c :a :b :c :a)
 </code>
 
- * cycle
-   `cycle`需要一个序列/collection作为输入参数，返回一个延迟加载序列，由反复地重复这个序列或collection中的值组成。
+ * interleave
+   `interleave`以任意数量的序列/collection作为输入参数。它返回一个延迟加载序列，它是这样组成的：拿出每个参数序列的第一个项放到新序列中，然后是第二个项，第三个，以此类推。它会在任意一个序列达到尾部的时候停止。
 
 <code language="clj">
 user=> (interleave `[:a :b :c`] `[1 2 3`])
 (:a 1 :b 2 :c 3)
-
- * interleave
-   `interleave`以任意数量的序列/collection作为输入参数。它返回一个延迟加载序列，它是这样组成的：拿出每个参数序列的第一个项放到新序列中，然后是第二个项，第三个，以此类推。它会在任意一个序列达到尾部的时候停止。
 
 user=> (interleave `[:a :b :c`] (iterate inc 1)]
 (:a 1 :b 2 :c 3)
