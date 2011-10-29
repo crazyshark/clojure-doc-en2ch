@@ -305,4 +305,116 @@ user=>(+ x y)
 8
 }}}
 在绑定表达式内部，(+ x y)得出结果3.在绑定表达式外，(+ x y)使用了原来的var的值，所以结果是8。
-到目前为止，绑定可能看起来与let类似。它们的区别在于，绑定不是建立一个本地符号，而是重新绑定var的值
+到目前为止，绑定可能看起来与let类似。它们的区别在于，绑定不是建立一个本地符号，而是重新绑定var的值。例如，看看以下例子：
+{{{
+user=>(def x 5)
+#'user/x
+user=>(def y 3)
+#'user/y
+user=>(defn get-val [] (+ x y))
+#'user/get-val
+user=>(get-val)
+8
+user=>(binding [x 1 y 2] (get-val))
+3
+}}}
+绑定实际上时重新建立了x和y的值。当get-val函数在绑定形式内部被使用时，它选择线程本地绑定的x和y来使用。
+此外，绑定中的符号绑定可以使用set!函数来更新（与其它编程语言中的命令式变量类似）。以下例子有点长，但是它揭视了独立的代码如何更新同一个绑定：
+{{{
+user=>(def x 5)
+#'user/x
+user=>(def y 3)
+#'user/y
+user=>(defn set-val [] (set! x 10))
+#'user/set-val
+user=>(defn get-val[] (+ x y))
+#'user/get-val
+user=>(binding [x 1 y 2] (set-val) (get-val))
+12
+}}}
+注意set-val是如何被首先调用的，并且x的值被重新设置为10，所以当get-val在后面使用时，它使用了被更新的值。在绑定形式中，所有被绑定的符号的引用都能看到set!造成的修改。
+===什么时候使用线程本地var===
+在Clojure中很少地方能适合使用线程本地状态。大量使用线程本地状态违背了函数式变成的精神。所以这个功能仅仅是作为在某些特别情况下用来提升性能的手段。
+  * 对某些算法来说，将状态堪称时可变的变量，可能会让算法看起来更有逻辑性和便利性。这样的例子包括解析器和状态机。通常，实现同样算法功能的，功能性算法时存在的，只是它们对于来自命令式编程北京的程序员来说，不是十分明显
+  * 在真正标识线程本地语义的地方，基于上下文的值可变化。例如，对于很多Clojure运行时的设置是保存在var绑定中的，这样可以很方便的在任何代码中都使用set!来设置新值。其中一个例子时*out*，它指向标准输出流
+==跟踪标识==
+除了更新状态外，还有更多的状态管理功能。所以Clojure在其状态管理子系统内提供了两个非常有用的“钩子”。这两个钩子使得比较容易的跟踪状态和标识。
+===校验器===
+校验器是可被附着在任何状态类型（refs、atoms、agents和vars）上的函数，它用来在一个状态被真正提交为标识的新值前对其进行校验。如果一个新值被校验器函数否决了，那么标识的状态不会变化。
+要向一个标识添加一个校验器，请使用set-validator!函数。这个函数接受两个参数：一个标识和一个函数。这个函数不能产生任何副作用，必须接受一个参数和必须返回一个布尔值。
+当标识的状态将要被更新时，校验器函数会被传递入新值。如果函数返回true，那么标识的值就被更新。如果函数返回false或抛出异常，那么会从标识更新函数中抛出一个异常。
+看下面例子，向一个ref设置一个校验器。校验器确保所有值都必须大于0：
+{{{
+user=>(def my-def (ref 5))
+#'user/my-ref
+user=>(set-validator! my-ref (fn [x] (< 0 x)))
+nil
+user=>(dosync (alter my-ref - 10))
+#<CompilerException java.lang.IllegaltateException: Invalid Reference State>
+user=>(dosync (alter my-ref - 10) (alter my-ref + 15))
+10
+user=>@my-ref
+5
+}}}
+对于一个agent：
+{{{
+user=>(def my-agent (agent 5))
+#'user/my-agent
+user=>(set-validator! my-agent (fn [x] (< 0 x)))
+nil
+user=>(send my-agent - 10)
+#<Agent 5>
+user=>(agent-errors my-agent)
+(#<CompilerException java.lang.IllegalStateException: Invalid Reference State>)
+}}}
+注意，当校验器用在agent时，错误信息被agent的错误处理系统捕捉和记录，而不是箱ref那样立刻抛出来。
+如果一个标识的原值，按照校验器的校验标准，已经时不合法的。那么在设置校验器时，一个异常会立刻被抛出来，并且校验器不会被设置：
+{{{
+user=>(def my-atom (atom -5))
+#'user/my-atom
+user=>(set-validator! my-atom (fn [x] (<0 x)))
+#<CompilerException java.lang.RuntimeException java.lang.IllegalStateException: Invalid Reference State>
+}}}
+可使用get-validator函数获取一个标识当前的校验器函数：
+{{{
+user=>(def my-agent (agent 5))
+#'user/my-agent
+user=>(get-validator my-agent)
+#<user$eval__4868$fn__4870 user$eval__4868$fn_4870@1dc518b>
+}}}
+从上面例子可看到，函数的字符串表示并没有什么实际作用。然而，由于函数是Clojure中的第一类实体，你可以按照你希望的方式使用被返回的函数-将其作为另外标识的校验器、直接调用它等等。
+要移除一个校验器，向set-validator!函数传递nil作为校验器函数参数即可。
+===监视器===
+监视器是在状态变化是被调用的函数。它们能作用于ref、atom、agent和var（对于var，它们只在根绑定变化时被调用，而不会在使用set!的变化上被调用）。
+与校验器不同，监视器在状态被变化后就立刻被调用（对于agent，调用是发生在同一个线程）。每个标识可以附着多个监视器：每个监视器由一个任意的键，可通过这个键被标识。监视器可用于那些依赖于一个标识值的程序逻辑上-它们提供了一个事件驱动或被动反应的程序设计方法。
+要添加一个监视器，使用add-watch函数。这个函数接受三个参数：一个标识、一个键和一个函数。这个键可以是任何值，前提是在这个标识的所有监视器中是唯一的。
+监视器函数本身接受四个参数：键、标识、标识的旧值和标识的新值。
+例如，下面代码使用监视器来打印ref的老值和新值：
+{{{
+user=> (defn my-watch [key identity old-val new-val] (println (str "Old: " old-val))
+                  (println (str "New: " new-val)))
+#'user/my-watch
+user=> (def my-ref (ref 5))
+#'user/my-ref
+user=> (add-watch my-ref "watch1" my-watch)
+#<Ref 5>
+user=> (dosync (alter my-ref inc))
+Old: 5
+New: 6
+6
+}}}
+注意如果一个标识被快速的更新了，很有可能在其第一个监视器函数还在执行的时候，标识又被再次更新。这就是为何监视器函数会被传递老值和新值：它们反应了真正触发监视器的状态变化。
+在监视器函数中反引用标识得出的值可能与给定的新值参数的值不一样，因为可能会有很多更新发生。
+要移除一个监视器，使用remove-watch函数。它非常简单：这个函数仅仅接受一个标识和一个键作为参数，并移除了与那个键和标识关联的监视器。
+{{{
+user=> (remove-watch my-ref "watch1") 
+#<Ref 6>
+}}}
+==总结==
+Clojure的状态管理系统提供了多个有效的方式来管理状态。它们组合成为一个稳定的、设计巧妙的状态管理机制、软件事务内存（STM）、基于agent的系统，以使得状态管理更加清晰和有效。Clojure中的状态管理通常比其它编程语言中的状态管理更能避免错误发生，并且能够工作在单线程或多线程程序中。Clojure提供了四种不同的状态管理策略工具，它们应该能够满足你的需要：
+  * 使用ref来提供同步、协调的更新，并允许直接访问STM系统
+  * 使用atoms来管理同步、独立状态（例如缓存）来达到最大效率
+  * 使用agent来管理异步状态，并为你的程序提供并发能力
+  * 使用var来管理遵循栈规则的状态，以有效模拟某些算法需要的可变变量
+  * 使用校验器函数来维护数据完整性
+  * 使用监视器来触发依赖标识值的事件
