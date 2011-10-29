@@ -386,93 +386,141 @@ user=> (rseq [1 2 3 4])
    `lazy-seq`作为一个宏，用来包裹一个返回序列的form。他产生一个延迟加载的序列，在前一节“直接构建延迟加载的序列”中已经详细讨论过了。
 
  * repeatedly
-   `repeatedly`需要一个输入参数，一个不能有输入参数的函数，返回由不断调用这个函数得到的返回值组成的延迟加载的序列。需要注意一点，如果这个函数是一个纯函数，它每次都会返回相同的值，因为它没有输入参数。
-
-通常，`repeatedly`与一个有副作用的函数一块儿工作会更有用，比如
+   `repeatedly`需要一个输入参数，一个不能有输入参数的函数，返回由不断调用这个函数得到的返回值组成的延迟加载的序列。需要注意一点，如果这个函数是一个纯函数（pure function），它每次都会返回相同的值，因为它没有输入参数。
 
 <code language="clj">
 user=> (take 5 (repeatedly (fn `[`] "hello")))
 ("hello" "hello" "hello" "hello" "hello")
 </code>
 
+通常，`repeatedly`与一个不纯的函数（impure function）一块儿工作会更有用，比如一个机遇`rand-int`的函数，它会返回0和它输入参数之间的一个任意数字。
+
 <code language="clj">
 user=> (take 5 (repeatedly (fn `[`] (rand-int 5))))
 (3 0 4 3 2)
 </code>
+
+ * iterate
+   `iterate`需要两个输入参数：一个单输入参数的函数和一个值。它以这个值为初始值，把所提供函数以这个值为参数调用，得到的值作为第二项并作为参数再次调用函数，以此类推得到的一系列值作为延迟加载序列返回。
 
 <code language="clj">
 user=> (take 10 (iterate inc 5))
 (5 6 7 8 9 10 11 12 13 14)
 </code>
 
+这个例子使用递增函数`inc`来产生一个从5开始的无限长整数序列。查看前一节“使用序列申城函数构建延迟加载的序列”中的讨论来了解更多细节。
+
+ * repeat
+   `repeat`需要一个或者两个输入参数。一个参数的版本返回以这个参数的值无尽重复组成的无限长延迟加载序列。
+
 <code language="clj">
 user=> (take 5 (repeat "hi"))
 ("hi" "hi" "hi" "hi" "hi")
 </code>
+
+   两个参数的版本以一个数字作为第一个参数，一个值为第二个参数，它返回以第二个参数无尽重复的序列，第一个参数指定了这个序列的长度。
 
 <code language="clj">
 user=> (repeat 5 "hi")
 ("hi" "hi" "hi" "hi" "hi")
 </code>
 
+ * range
+   `rang`的参数个数可以为一个、两个或者三个。一个参数的版本以一个数字作为参数，返回一个从0（包含）到这个数字（不包含）间所有数字组成的延迟加载的序列。
+
 <code language="clj">
 user=> (range 5)
 (0 1 2 3 4)
 </code>
+
+   两个参数的版本以两个数字作为参数，返回一个从第一个数字（包含）到第二个数字（不包含）之间所有数字组成的延迟加载序列。
 
 <code language="clj">
 user=> (range 5 10)
 (5 6 7 8 9)
 </code>
 
+   三个参数的版本需要三个数字作为参数，还是返回一个延迟加载的序列，以第一个数字（包含）为起点，第二个数字（不包含）为终点，不同的是以第三个数字作为递增值。
+
 <code language="clj">
 user=> (range 4 16 2)
 (4 6 8 10 12 14)
 </code>
+
+ * distinct
+   `distinct`以一个序列或collection作为参数。返回一个序列，剔除了所有的重复值。
 
 <code language="clj">
 user=> (distinct `[1 2 2 3 3 4 1`])
 (1 2 3 4)
 </code>
 
+ * filter
+   `filter`需要两个参数：一个单输入参数返回布尔值的断言函数（predicate function，谓词），和一个序列/collection。返回一个延迟加载序列，它只包含这个序列/collection中输入到断言函数中返回值为true的那些值。
+
 <code language="clj">
 user=> (filter (fn `[s`] (= \a (first s))) ["ant" "bee" "ape" "cat" "dog"])
 ("ant" "ape")
 </code>
+
+   在这个例子中，断言函数检测它的参数是否以一个“a”字符作为起始字符。
+
+ * remove
+   `remove`和filter类似，但是它将断言函数返回值为true的那些值剔除了。
 
 <code language="clj">
 user=> (remove (fn `[s`] (= \a (first s))) ["ant" "bee" "ape" "cat" "dog"])
 ("bee" "cat" "dog")
 </code>
 
+ * cons
+   `cons`需要两个参数，一个值和一个序列/collection。它将这个值附加到这个序列/collection中，并返回一个序列（先调用seq函数得到一个序列，然后将值附加在序列的最前方）。
+
 <code language="clj">
 user=> (cons 1 `[ 2 3 4`])
 (1 2 3 4)
 </code>
+
+ * concat
+   `concat`可以接受任意数量的输入参数，只要是序列/collection就可以。它把这些序列串联起来，返回一个他们组成的延迟加载序列。
 
 <code language="clj">
 user=> (concat `[1 2 3`] '(4 5 6) `[7 8 9`])
 (1 2 3 4 5 6 7 8 9)
 </code>
 
+ * lazy-cat
+   `lazy-cat`序列也是接受任意数量的序列/collection作为输入参数（也可以是任意form，只要能求值得到序列或collection）。调用它得到一个连接所有这些序列的延迟加载序列。`lazy-cat`与`concat`不同，那些作为输入参数的form直到需要的时候才会被求值（evaluate）。就像`lazy-cat`的字面意思一样，它和`concat`很像，但是延迟性更好（lazier）。当结果可能不会被完全使用的时候使用`lazy-cat`,这样对所提供的一些form的求值工作就能省去了。
+
 <code language="clj">
 user=> (lazy-cat [1 2 3] ‘(4 5 6) [7 8 9])
 (1 2 3 4 5 6 7 8 9)
 </code>
 
+ * mapcat
+   `mapcat`以一个函数作为第一个参数，然后任意数量的序列/collection作为附加参数。它把这个函数应用到所有这些序列或collection上，然后把所得到的结果连接起来。`mapcat`在使用`concat`连接这些结果的时候，会假设这个函数会返回一个collection或序列。
+
 <code language="clj">
 user=> (mapcat (fn `[x`] (repeat 3 x)) [1 2 3])
 (1 1 1 2 2 2 3 3 3)
 </code>
+   
+   这个例子中，提供的函数返回一个由三个输入参数组成的序列。`mapcat`将函数应用到剩下这些序列或collection之后再将它们连接起来。
 
 <code language="clj">
 user=> (take 10 (cycle `[:a :b :c`]))
 (:a :b :c :a :b :c :a)
 </code>
 
+ * cycle
+   `cycle`需要一个序列/collection作为输入参数，返回一个延迟加载序列，由反复地重复这个序列或collection中的值组成。
+
 <code language="clj">
 user=> (interleave `[:a :b :c`] `[1 2 3`])
 (:a 1 :b 2 :c 3)
+
+ * interleave
+   `interleave`以任意数量的序列/collection作为输入参数。它返回一个延迟加载序列，它是这样组成的：拿出每个参数序列的第一个项放到新序列中，然后是第二个项，第三个，以此类推。它会在任意一个序列达到尾部的时候停止。
 
 user=> (interleave `[:a :b :c`] (iterate inc 1)]
 (:a 1 :b 2 :c 3)
@@ -481,10 +529,16 @@ user=> (interleave [:a :b :c] [1 2 3] [\A \B \C])
 (:a 1 \A :b 2 \B :c 3 \C)
 </code>
 
+ * interpose
+   `interpose`需要两个参数，一个值和一个序列/collection，它通过将这个值插入到序列或collection的值之间的方式得到一个延迟加载的序列。
+
 <code language="clj">
 user=> (interpose :a [1 2 3 4])
 (1 :a 2 :a 3 :a 4 :a 5)
 </code>
+
+ * rest
+   `rest`以一个序列/collection作为参数。返回剔除了第一项的一个新序列（会从collection转换到序列）。如果没有更多的项（输入的序列/collection只有一项），它会返回一个空序列。
 
 <code language="clj">
 user=> (rest `[1 2 3 4`])
@@ -493,6 +547,9 @@ user=> (rest `[1 2 3 4`])
 user=> (rest `[`])
 ()
 </code>
+
+ * next
+   `next`与`rest`几乎完全相同，除了一点，如果没有更多的项，它会返回`nil`。
 
 <code language="clj">
 user=> (next `[1 2 3 4`])
@@ -677,27 +734,4 @@ user=> (doall result)
 4
 (nil nil nil nil)
 </code>
-
-<code language="clj">
-
-</code>
-
-<code language="clj">
-
-</code>
-
-<code language="clj">
-
-</code>
-
-<code language="clj">
-
-</code>
-
-<code language="clj">
-
-</code>
-
-<code language="clj">
-
 </code>
