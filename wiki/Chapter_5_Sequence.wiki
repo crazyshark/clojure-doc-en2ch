@@ -345,3 +345,359 @@ user=> (nth (iterate inc 0) 1000000)
 Clojure提供了一整套操纵序列的函数。熟悉他们，了解他们的能力将能省掉你大量的精力，因为你经常会发现可以将一大段数量惊人的代码替换为对其中某个函数的调用。
 
 ==构造序列==
+
+这一节的函数提供了多种不同的方法来构建序列，包括直接构建或者是基于已有的数据结构之上。
+
+ * seq
+   `seq`函数需要一个collection作为输入参数，返回这个collection的一个序列表象（a sequence representaion）。大多数序列操纵函数都隐式地在他们的输入参数上调用`seq`，所以他们可以接受各种collection，而不用手动地去调用`seq`。
+
+<code language="clj">
+user=> (seq [1 2 3 4 5])
+(1 2 3 4 5)
+user=> (seq {:a 1 :b 2 :c 3})
+([:a 1] [:b 2] [:c 3])
+</code>
+
+ * vals
+   `vals`以一个map作为输入参数，返回一个由map所有的值（value）组成的序列。
+
+<code language="clj">
+user=> (vals {:key1 "value1" :key2 "value2" :key3 "value3"})
+(" value1" "value2" "value3")
+</code>
+
+ * keys
+   `keys`以一个map作为输入参数，返回一个由map所有的键（key）组成的序列。
+
+<code language="clj">
+user=> (keys {:key1 "value1" :key2 "value2" :key3 "value3"})
+(:key1 :key2 :key3)
+</code>
+
+ * rseq
+   `rseq`需要一个输入参数，这个参数只能是一个vector或者是一个sorted map。它返回一个由他们的值逆向排列组成的序列，这个操作执行的时间是常量值。
+
+<code language="clj">
+user=> (rseq [1 2 3 4])
+(4 3 2 1)
+</code>
+
+ * lazy-seq
+   `lazy-seq`作为一个宏，用来包裹一个返回序列的form。他产生一个延迟加载的序列，在前一节“直接构建延迟加载的序列”中已经详细讨论过了。
+
+ * repeatedly
+   `repeatedly`需要一个输入参数，一个不能有输入参数的函数，返回由不断调用这个函数得到的返回值组成的延迟加载的序列。需要注意一点，如果这个函数是一个纯函数，它每次都会返回相同的值，因为它没有输入参数。
+
+通常，`repeatedly`与一个有副作用的函数一块儿工作会更有用，比如
+
+<code language="clj">
+user=> (take 5 (repeatedly (fn `[`] "hello")))
+("hello" "hello" "hello" "hello" "hello")
+</code>
+
+<code language="clj">
+user=> (take 5 (repeatedly (fn `[`] (rand-int 5))))
+(3 0 4 3 2)
+</code>
+
+<code language="clj">
+user=> (take 10 (iterate inc 5))
+(5 6 7 8 9 10 11 12 13 14)
+</code>
+
+<code language="clj">
+user=> (take 5 (repeat "hi"))
+("hi" "hi" "hi" "hi" "hi")
+</code>
+
+<code language="clj">
+user=> (repeat 5 "hi")
+("hi" "hi" "hi" "hi" "hi")
+</code>
+
+<code language="clj">
+user=> (range 5)
+(0 1 2 3 4)
+</code>
+
+<code language="clj">
+user=> (range 5 10)
+(5 6 7 8 9)
+</code>
+
+<code language="clj">
+user=> (range 4 16 2)
+(4 6 8 10 12 14)
+</code>
+
+<code language="clj">
+user=> (distinct `[1 2 2 3 3 4 1`])
+(1 2 3 4)
+</code>
+
+<code language="clj">
+user=> (filter (fn `[s`] (= \a (first s))) ["ant" "bee" "ape" "cat" "dog"])
+("ant" "ape")
+</code>
+
+<code language="clj">
+user=> (remove (fn `[s`] (= \a (first s))) ["ant" "bee" "ape" "cat" "dog"])
+("bee" "cat" "dog")
+</code>
+
+<code language="clj">
+user=> (cons 1 `[ 2 3 4`])
+(1 2 3 4)
+</code>
+
+<code language="clj">
+user=> (concat `[1 2 3`] '(4 5 6) `[7 8 9`])
+(1 2 3 4 5 6 7 8 9)
+</code>
+
+<code language="clj">
+user=> (lazy-cat [1 2 3] ‘(4 5 6) [7 8 9])
+(1 2 3 4 5 6 7 8 9)
+</code>
+
+<code language="clj">
+user=> (mapcat (fn `[x`] (repeat 3 x)) [1 2 3])
+(1 1 1 2 2 2 3 3 3)
+</code>
+
+<code language="clj">
+user=> (take 10 (cycle `[:a :b :c`]))
+(:a :b :c :a :b :c :a)
+</code>
+
+<code language="clj">
+user=> (interleave `[:a :b :c`] `[1 2 3`])
+(:a 1 :b 2 :c 3)
+
+user=> (interleave `[:a :b :c`] (iterate inc 1)]
+(:a 1 :b 2 :c 3)
+
+user=> (interleave [:a :b :c] [1 2 3] [\A \B \C])
+(:a 1 \A :b 2 \B :c 3 \C)
+</code>
+
+<code language="clj">
+user=> (interpose :a [1 2 3 4])
+(1 :a 2 :a 3 :a 4 :a 5)
+</code>
+
+<code language="clj">
+user=> (rest `[1 2 3 4`])
+(2 3 4)
+
+user=> (rest `[`])
+()
+</code>
+
+<code language="clj">
+user=> (next `[1 2 3 4`])
+(2 3 4)
+user=> (next `[`])
+nil
+</code>
+
+<code language="clj">
+user=> (drop 2 `[:a :b :c :d :e`])
+(:c :d :e)
+</code>
+
+<code language="clj">
+user=> (drop-while pos? `[2 1 5 -3 6 -2 -1`])
+(-3 6 -2 -1)
+</code>
+
+<code language="clj">
+user=> (take 2 `[1 2 3 4 5`])
+(1 2)
+</code>
+
+<code language="clj">
+user=> (take-nth 3 `[1 2 3 4 5 6 7 8 9 10`])
+(1 4 7 10)
+</code>
+
+<code language="clj">
+user=> (take-while pos? `[2 1 5 -3 6 -2 -1`])
+(2 1 5)
+</code>
+
+<code language="clj">
+user=> (drop-last `[1 2 3 4 5`])
+(1 2 3 4)
+</code>
+
+<code language="clj">
+user=> (drop-last 2 `[1 2 3 4 5`])
+(1 2 3)
+</code>
+
+<code language="clj">
+user=> (reverse `[1 2 3 4 5`])
+(5 4 3 2 1)
+</code>
+
+<code language="clj">
+user=> (sort `[2 3 5 4 1`])
+(1 2 3 4 5)
+</code>
+
+<code language="clj">
+user=> (sort-by (fn `[n`] (/ 1 n)) `[2 3 5 4 1`])
+(5 4 3 2 1)
+</code>
+
+<code language="clj">
+user=> (split-at 2 `[:a :b :c :d :e :f`])
+`[(:a :b) (:c :d :e :f)`]
+</code>
+
+<code language="clj">
+user=> (split-with pos? `[2 1 5 -3 6 -2 -1`])
+`[(2 1 5) (-3 6 -2 -1)`]
+</code>
+
+<code language="clj">
+user=> (partition 2 `[:a :b :c :d :e :f`])
+((:a :b) (:c :d) (:e :f))
+</code>
+
+<code language="clj">
+user=> (partition 2 1 `[:a :b :c :d :e :f`])
+((:a :b) (:b :c) (:c :d) (:d :e) (:e :f))
+</code>
+
+<code language="clj">
+user=> (map pos? `[2 1 5 -3 6 -2 -1`])
+(true true true false true false false)
+
+user=> (map + `[2 4 8`] `[1 3 5`])
+(3 7 13)
+</code>
+
+<code language="clj">
+user=> (first `[1 2 3 4`])
+1
+</code>
+
+<code language="clj">
+user=> (second `[1 2 3 4`])
+2
+</code>
+
+<code language="clj">
+user=> (nth `[:a :b :c :d`] 2)
+:c
+</code>
+
+<code language="clj">
+user=> (last `[1 2 3 4`])
+4
+</code>
+
+<code language="clj">
+user=> (reduce + `[1 2 3 4 5`])
+15
+</code>
+
+<code language="clj">
+user=> (reduce (fn `[my-map value`]
+                               (assoc my-map value (/ 1 value)))
+                          {}
+                          [1 2 3 4 5])
+{5 1/5, 4 1/4, 3 1/3, 2 1/2, 1 1}
+</code>
+
+<code language="clj">
+user=> (apply + 1 `[2 3`])
+6
+</code>
+
+<code language="clj">
+user=> (apply + (range 1 6))
+15
+</code>
+
+<code language="clj">
+user=> (empty? `[1 2 3 4`])
+false
+
+user=> (empty? `[`])
+true
+</code>
+
+<code language="clj">
+user=> (some (fn `[n`] (< n 5)) `[6 9 7 3`])
+true
+
+user=> (some (fn `[n`] (< n 5)) `[6 9 7 5`])
+nil
+</code>
+
+<code language="clj">
+user=> (every? (fn `[n`] (< n 5)) `[2 1 4 3`])
+true
+
+user=> (every? (fn `[n`] (< n 5)) `[2 1 5 3`])
+false
+</code>
+
+<code language="clj">
+user=> (def result (map println (range 1 5)))
+#'user/result
+user=> (dorun result)
+1
+2
+3
+4
+nil
+</code>
+
+<code language="clj">
+user=> (def result (map println (range 1 10)))
+#’user/result
+user=> (dorun 2 result)
+1
+2
+3
+nil
+</code>
+
+<code language="clj">
+user=> (def result (map println (range 1 5)))
+#’user/result
+user=> (doall result)
+1
+2
+3
+4
+(nil nil nil nil)
+</code>
+
+<code language="clj">
+
+</code>
+
+<code language="clj">
+
+</code>
+
+<code language="clj">
+
+</code>
+
+<code language="clj">
+
+</code>
+
+<code language="clj">
+
+</code>
+
+<code language="clj">
+
+</code>
