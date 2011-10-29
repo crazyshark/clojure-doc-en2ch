@@ -241,4 +241,41 @@ user=>(error-mode my-agent)
 :continue
 }}}
 
-//TODO:TBC
+可以通过使用set-error-handler!函数来想agent设置一个错误处理器。set-error-handler!函数接受一个agent和一个错误函数作为参数。当一个动作抛出一场或者将agent的状态设置为一个异常值时，这个错误函数将会被调用。错误函数本身接受两个参数：一个agent和一个异常对象。例如，下列代码：
+{{{
+user=>(set-error-handler! my-agent (fn [agt ex] (...))
+nil
+}}}
+通常，错误处理函数被用来记录错误或者实现一些修正机制来保证同类异常不会再次发生。你也可以使用error-handler函数来获取agent当前的错误处理函数。error-handler函数接受一个agent作为参数，并返回agent的错误处理函数。
+
+===处理处于失败状态的agent===
+如果对处于失败状态的agent调用send或send-off函数调用，那么agent会抛出异常（虽然对agent的反引用还是能获取agent最后一次的正确值）。例如：以下例子中的除以0操作会导致agent进入失败状态：
+{{{
+user=>(def an-agent (agent 10))
+#'user/an-agent
+user=>(send an-agent / 0)
+#<Agent@1afa486: 10>
+user=>(send an-agent + 1)
+java.lang.RuntimeException: Agent is failed,needs restart
+}}}
+如果要检查agent当前的错误情况，我们可以使用agent-error函数，它接受一个agent作为唯一的参数：
+{{{
+user=>(agent-error an-agent)
+#<ArithmeticException java.lang.ArithmeticException: Divide by zero>
+}}}
+为了将agent重新放入正常状态，你必须调用restart-agent函数。restart-agent函数接受一个agent、一个新状态和任意数量的其它关键字-值对作为参数。当前支持的关键字-值对是:clear-actions关键字对应一个布尔值。
+当restart-agent函数被调用时，这个函数将agent的状态设置为给定的状态，并移除agent的错误状态，这样agent就可以重新接受新的动作了。如果:clear-actions设置为true，那么agent的动作队列会被清空；否则，正在等待的动作会比串行式地调用。restart-agent函数返回agent的新状态作为返回参数。
+将之前例子中的agent进行重置：
+{{{
+user=>(restart-agent my-agent 5 :clear-actions true)
+5
+}}}
+现在，可以向这个agent发送更多动作：
+{{{
+user=>(send my-agent + 1)
+#<Agent@1365360: 5>
+user=>@my-agent
+6
+}}}
+===等待agent===
+虽然agent可以
