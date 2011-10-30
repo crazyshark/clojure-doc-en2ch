@@ -677,7 +677,7 @@ user=> (partition 2 1 `[:a :b :c :d :e :f`])
 </code>
 
  * map
-   `map`
+   `map`需要一个函数作为第一个参数，然后是任意数量的序列/collection作为附加参数。提供的函数的输入参数个数应该与提供的附加序列的个数相当。它返回的延迟加载序列是通过在这些序列的每个项之上调用函数得到返回值来构建的。
 
 <code language="clj">
 user=> (map pos? `[2 1 5 -3 6 -2 -1`])
@@ -687,48 +687,75 @@ user=> (map + `[2 4 8`] `[1 3 5`])
 (3 7 13)
 </code>
 
+ * first
+   `first`需要一个序列/collection作为参数。返回这个序列的第一个项，如果这个序列为空则返回nil。
+
 <code language="clj">
 user=> (first `[1 2 3 4`])
 1
 </code>
+
+ * second
+   `second`需要一个序列/collection作为参数。返回这个序列的第二个项，如果这个序列为空则返回nil。
 
 <code language="clj">
 user=> (second `[1 2 3 4`])
 2
 </code>
 
+ * nth
+   `nth`需要两个参数：一个序列/collection和一个数字。返回提供序列的第N项，N为第二个参数。序列是从0开始索引的，所以`(nth sequence 0)`等效与`(first sequence)`。如果这个序列少于N项，它会抛出一个error。
+
 <code language="clj">
 user=> (nth `[:a :b :c :d`] 2)
 :c
 </code>
+
+ * last
+   `last`需要一个序列/collection作为参数。返回序列中最后一项。如果序列为空返回nil。
 
 <code language="clj">
 user=> (last `[1 2 3 4`])
 4
 </code>
 
+ * reduce
+   `reduce`需要两个或三个输入参数。在两个参数的版本中，第一个参数是一个双输入参数的函数，第二个参数是一个序列/collection。`reduce`把这个函数应用在序列的头两个项之上，之后把这个函数应用在第一次调用的结果和之后的一个项之上，以此类推。
+
 <code language="clj">
 user=> (reduce + `[1 2 3 4 5`])
 15
 </code>
 
+   这个例子中，`reduce`把加法函数应用到一个整数的列表上，得到了这些整数的总和。
+   
+   三个参数的版本比较相似，除了它需要一个函数，一个起始值和一个序列/collection。函数首先被应用到起始值和序列的第一个项之上，而不是序列的前两项。接下来的这个例子展示了从一个序列构建一个map的过程：使用每个项作为键，这个项的倒数作为值。一个空的map被作为初始值输入：
+
 <code language="clj">
 user=> (reduce (fn `[my-map value`]
                                (assoc my-map value (/ 1 value)))
                           {}
-                          [1 2 3 4 5])
+                          `[1 2 3 4 5`])
 {5 1/5, 4 1/4, 3 1/3, 2 1/2, 1 1}
 </code>
+
+ * apply
+   `apply`需要两个或更多的参数。第一个参数是一个函数，最后一个参数是一个序列/collection。其他的参数可以使任意值。它返回将所有输入的值以及提供的序列中的所有值作为参数去调用这个函数。调用`(apply f a b [c d e])`与调用`(f a b c d e)`是完全相同的。`apply`的优势在于它可以构建动态的参数序列。
 
 <code language="clj">
 user=> (apply + 1 `[2 3`])
 6
 </code>
 
+   一个将`apply`应用到动态的参数列表上的例子：把0到5的整数作为参数调用`+`。这个调用与`(+ 1 2 3 4 5)`是完全相同的，除了参数列表是动态构建的。
+
 <code language="clj">
 user=> (apply + (range 1 6))
 15
 </code>
+
+ * empty?
+   `empty?`使用蛋哥序列/collection作为参数。如果这个序列为空，则它返回true，反之则为false。
 
 <code language="clj">
 user=> (empty? `[1 2 3 4`])
@@ -738,6 +765,9 @@ user=> (empty? `[`])
 true
 </code>
 
+ * some
+   `some`需要两个输入参数：一个单输入参数的断言函数和一个序列/collection。如果序列中只要有一个项不会使断言函数返回false或nil，它返回这个断言函数的返回值，否则返回nil。
+
 <code language="clj">
 user=> (some (fn `[n`] (< n 5)) `[6 9 7 3`])
 true
@@ -746,6 +776,9 @@ user=> (some (fn `[n`] (< n 5)) `[6 9 7 5`])
 nil
 </code>
 
+ * every?
+   `every?`需要两个输入参数：一个单输入参数的断言函数和一个序列/collection。如果对于序列中的所有项断言函数都返回true，则返回true，反之返回false。
+
 <code language="clj">
 user=> (every? (fn `[n`] (< n 5)) `[2 1 4 3`])
 true
@@ -753,6 +786,11 @@ true
 user=> (every? (fn `[n`] (< n 5)) `[2 1 5 3`])
 false
 </code>
+
+ * dorun
+   `dorun`需要一个或两个输入参数：一个延迟加载的序列或者一个可选的数字和一个延迟加载的序列。它将导致这个延迟加载的序列被实现，仅仅是为了这个过程中的副作用。`dorun`总是返回nil而且不会保留列表的头，所以它不会消耗内存。
+   
+   为了说明，接下来的这个例子将`map`函数应用在一个延迟加载的序列上，同时将`println`函数作为`map`的第二个参数。一般来讲，`println`不是作为`map`输入参数的好选择，因为它的执行只会带来副作用，同时返回nil。
 
 <code language="clj">
 user=> (def result (map println (range 1 5)))
@@ -765,6 +803,9 @@ user=> (dorun result)
 nil
 </code>
 
+   在这个例子中，`result`符号被绑定到一个延迟加载的序列上，即一个`map`函数的返回值。这个序列的所有实际值（所有项的值）都是nil，因为它们都是调用`println`的返回值。但这些值并没有在例子中使用到。但是，当序列的生成器函数（generator function）`println`被调用的时候，它会产生副作用。因为`map`返回的序列是延迟加载的，知道调用了`dorun`生成器函数才被触发，并强制序列被依次求值。
+   如果一个数字形式的参数被传递给了`dorun`，它只会对指定索引之前的项进行求值。
+
 <code language="clj">
 user=> (def result (map println (range 1 10)))
 #’user/result
@@ -774,6 +815,11 @@ user=> (dorun 2 result)
 3
 nil
 </code>
+
+   在用`dorun`调用一个无限长序列的时候需要非常小心，一定要保证提供的参数是数字，否则它的执行可能永远不会停止。
+
+ * doall
+   `doall`与`dorun`几乎相同，除了一点，它会将序列求值的结果保存下来并将其返回。从本质上讲，`doall`会返回一个延迟加载序列的非延迟加载版本。这样做，它会导致与序列尺寸相当的内存消耗。在一个无限长序列上调用`doall`却不指定一个数字参数会倒是一个`OutOfMemoryError`，因为系统试着去缓存一个无限长的序列。
 
 <code language="clj">
 user=> (def result (map println (range 1 5)))
@@ -785,3 +831,11 @@ user=> (doall result)
 4
 (nil nil nil nil)
 </code>
+
+   可以注意到，在为了得到副作用执行生成器函数之后，它还返回了调用`map`得到到的序列。在这里，他们全都是nil，调用`println`的返回值。
+
+=总结=
+
+使用序列的次数越多，你越能体会到序列的重要性。拥有一个高度整合的，极其强大并泛化collection管理库在手中，当你回到一个没有它的语言环境中，你会发现你很难去完成某个目标。
+
+在编写符合Clojure语言习惯的代码时，你总在不停地使用序列。代码中任何可能会出现多个对象的地方都是一个可以使用序列来管理这个collection的潜在机会。这样做能免费地获得所有之前提到的这些序列函数，不管是内置的还是用户编写的。它们在编写富于表达，同时也十分简洁的程序时会带来巨大的助益。
