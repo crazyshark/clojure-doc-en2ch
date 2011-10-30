@@ -292,7 +292,22 @@ user=> (pow 5 3)
 
 关于递归存在一个实际的问题，因为物理计算机的硬件限制，导致内联函数的个数也会受到限制（栈空间的大小有限）。在JVM里面，这样会变得相当大
 
+===Clojure的尾递归（Clojure’s recur）===
 
+在一些函数式编程语言中，比如Scheme，递归调用在函数尾部时自动完成最佳优化。但是Clojure则不是这样，尾递归必须显式的使用* recur *形式。
+当你需要使用尾递归的时候，只需将尾调用时的函数名换成* recur *即可。这样它就会使用包含这个尾部调用的函数的最优化设置。
+举个例子，列表3-3 是一个非递归函数，求出小于给出数的的所有数的和。
+例如： (add-up 3) = 1 + 2 + 3 = 6. 
+{{{
+(defn add-up 
+    "adds all the numbers below a given limit" 
+    ([limit] (add-up limit 0 0 )) 
+    ([limit current sum] 
+        (if (< limit current) 
+          sum 
+          (add-up limit (+ 1 current) (+ current sum))))) 
+}}}
+...
 
 ==函数式编程技术(Functional Programming Techniques)==
 
