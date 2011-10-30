@@ -558,75 +558,126 @@ user=> (next `[`])
 nil
 </code>
 
+ * drop
+   `drop`需要两个输入参数：一个数字和一个序列/collection。它返回原序列中指定数值之后的项组成的新序列。如果没有足够的项，它会返回一个空序列。
+
 <code language="clj">
 user=> (drop 2 `[:a :b :c :d :e`])
 (:c :d :e)
 </code>
+
+ * drop-while
+   `drop-while`需要两个参数，一个单输入参数返回布尔值的断言函数和一个序列/collection。它返回一个新的序列，包含原序列中从第一个为之调用断言函数返回值为false的项起的所有项。
 
 <code language="clj">
 user=> (drop-while pos? `[2 1 5 -3 6 -2 -1`])
 (-3 6 -2 -1)
 </code>
 
+   这个例子使用了`pos?`断言函数，它为所有大于零的值返回true，反之为false；
+
+ * take
+   `take`需要两个参数，一个数字和一个序列/collection。 它返回一个新的序列，由原序列中从最前方第一项开始指定数目的项组成。
+
 <code language="clj">
 user=> (take 2 `[1 2 3 4 5`])
 (1 2)
 </code>
+
+ * take-nth
+   `take-nth`需要两个输入参数，一个数字和一个序列/collection。它返回一个新序列，由原序列中第一项和所有以N为步长在原序列中选择到的值（1+kN），N为第一个输入参数。
 
 <code language="clj">
 user=> (take-nth 3 `[1 2 3 4 5 6 7 8 9 10`])
 (1 4 7 10)
 </code>
 
+ * take-while
+   `take-while`需要两个参数，一个单输入参数返回布尔值的断言函数和一个序列/collection。它返回原序列中从第一个项起始，直到第一个为之调用断言函数返回值喂false的项组成的新序列。
+
 <code language="clj">
 user=> (take-while pos? `[2 1 5 -3 6 -2 -1`])
 (2 1 5)
 </code>
+
+ * drop-last
+   `drop-last`接受一个或两个参数。一个参数的版本接受一个序列/collection。返回剔除了最后一项的新序列。
 
 <code language="clj">
 user=> (drop-last `[1 2 3 4 5`])
 (1 2 3 4)
 </code>
 
+   两个参数的版本需要一个数字和一个序列/collection。返回剔除了最后N项的新序列，N为第一个参数。
+
 <code language="clj">
 user=> (drop-last 2 `[1 2 3 4 5`])
 (1 2 3)
 </code>
+
+ * reverse
+   `reverse`需要一个参数，一个序列/collection。它将原序列逆序返回。`reverse`非延迟加载。
 
 <code language="clj">
 user=> (reverse `[1 2 3 4 5`])
 (5 4 3 2 1)
 </code>
 
+ * sort
+   `sort`需要一个或两个输入参数，一个参数的版本需要一个序列/collection。返回基于序列中项自然排序后组成的新序列。
+
 <code language="clj">
 user=> (sort `[2 3 5 4 1`])
 (1 2 3 4 5)
 </code>
+
+   两个参数的版本接受一个实现了`java.util.Comparator`的对象和一个序列/collection。返回依据这个比较器进行排序后的结果。
+
+ * sort-by
+   `sort-by`需要两个或三个参数。两个参数的版本需要一个单输入参数的键函数（key function）和一个序列/collection。返回基于为序列中每一项调用键函数返回值进行排序的新序列。键函数需要能够返回一个本身能进行排序的值，如一个字符串或是一个数字。
 
 <code language="clj">
 user=> (sort-by (fn `[n`] (/ 1 n)) `[2 3 5 4 1`])
 (5 4 3 2 1)
 </code>
 
+   这个例子接受了一个返回输入参数的倒数的键函数。得到的序列实际上是根据为所有项应用键函数得到的值进行排序的，而不是所有项本身的值。意思就是说，他们是根据自己的倒数来排序的。
+ 
+   三个参数的版本需要一个键函数，一个实现了`java.util.Comparator`的对象和一个序列/collection。它跟两个参数的版本只有一点差别，它使用这个比较器来进行排序。
+
+ * split-at
+   `split-at`需要两个参数：一个数字和一个序列/collection。它返回一个拥有两个项的vector。第一个项是通过拿出原序列中前N个项组成的序列，N为第一个参数。第二个想是原序列中剩余的项。
+
 <code language="clj">
 user=> (split-at 2 `[:a :b :c :d :e :f`])
 `[(:a :b) (:c :d :e :f)`]
 </code>
+
+ * split-with
+   `split-with`需要两个参数：一个单输入参数的断言函数和一个序列/collection。它返回一个拥有两个项的vector。第一个项是通过在原序列中从第一项开始应用断言函数，将直到第一个返回值为false的项之前的所有项拿出组成的新序列。第二项包含了原序列中剩下的所有项。
 
 <code language="clj">
 user=> (split-with pos? `[2 1 5 -3 6 -2 -1`])
 `[(2 1 5) (-3 6 -2 -1)`]
 </code>
 
+ * partition
+   `partition`需要两个或三个输入参数。两个参数的版本需要一个数字和一个序列/collection，返回包含延迟加载序列的延迟加载序列（a lazy sequence of lazy sequences）。所有子序列都是由原序列中连续抽取出的N个项构成的，N是第一个输入参数。
+
 <code language="clj">
 user=> (partition 2 `[:a :b :c :d :e :f`])
 ((:a :b) (:c :d) (:e :f))
 </code>
 
+   三个输入参数的版本需要两个数字和一个序列/collection。第一个数字和两个参数的版本痒痛，第二个数字为偏移值，即指构成每个子序列时在原序列中起始项前进时的步长。这样就使子序列间项的重叠成为可能。
+
 <code language="clj">
 user=> (partition 2 1 `[:a :b :c :d :e :f`])
 ((:a :b) (:b :c) (:c :d) (:d :e) (:e :f))
 </code>
+
+ * map
+   `map`
 
 <code language="clj">
 user=> (map pos? `[2 1 5 -3 6 -2 -1`])
