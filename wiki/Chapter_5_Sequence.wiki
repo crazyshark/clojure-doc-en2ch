@@ -1,4 +1,6 @@
 #Start at Fri 14, Oct 2011
+#First version completed at Sun 30, Oct 2011, no collation.
+
 <wiki:toc max_depth="3" />
 
 =什么是序列？=
