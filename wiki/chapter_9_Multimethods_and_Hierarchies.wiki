@@ -95,7 +95,7 @@ user=> (attack d)
         ", greet each other."))
 </code>
 
-注意方法参数不必跟多路方法相同，但是分发方法和方法的参数数量必须相同。<br/>
+注意方法和多路方法的参数名不必相同，但是分发方法和方法的参数数量必须相同。<br/>
 现在以两个生物为参数调用encounter多路放下，看会发生什么：
 <code>
 user=> (encounter b c)
