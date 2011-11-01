@@ -239,7 +239,7 @@ user=> (encounter a d)
 
 ====Java的层次结构====
 <p>
-Clojure的层级结构可以集成和扩展Java的类层级结构。除了符号和关键字之外，派生子参数也可以是Java类。在JDK中没有类能够跟幻想世界相匹配，但是你可以指定Java Date类是坏的：
+Clojure的层级结构可以集成和扩展Java的类层级结构。除了符号和关键字之外，子也可以派生自Java类。在JDK中没有类能够跟幻想世界相匹配，但是你可以指定Java Date类是坏的：
 <code>
 user=> (derive java.util.Date ::evil)
 </code>
