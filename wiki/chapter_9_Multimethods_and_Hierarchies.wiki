@@ -267,14 +267,15 @@ user=> (invert
 
 ====更多的层次结构查询====
 <p>
-
+3个方法展示出了关于层次结构的更多的信息。
 <code>
 (parents tag)
 (ancestors tag)
 (descendants tag)
 </code>
 
-
+个方法都返回几何。parents返回当前亲标签，ancestors返回所有当前的和间接的亲。descendants返回所有的当前的和间接地子标签
+parents和ancestors同样适用于Java类；descendants对Java类不适用（受限于Java的类型系统）。
 <code>
 user=> (parents ::orc)
 #{:user/magical :user/evil}
@@ -291,6 +292,7 @@ user=> (parents java.util.Date)
 </code>
 </p>
 
+注意java.util.Date的祖先，包括Java类层次结构定义的和***derive***定义的。
 ====解决冲突====
 <p>
 
