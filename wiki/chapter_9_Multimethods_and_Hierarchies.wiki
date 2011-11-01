@@ -239,12 +239,12 @@ user=> (encounter a d)
 
 ====Java的层次结构====
 <p>
-
+Clojure的层级结构可以集成和扩展Java的类层级结构。除了符号和关键字之外，派生子参数也可以是Java类。在JDK中没有类能够跟幻想世界相匹配，但是你可以指定Java Date类是坏的：
 <code>
 user=> (derive java.util.Date ::evil)
 </code>
 
-
+isa?函数能够同时理解层级结构和Java类关系：
 <code>
 user=> (isa? java.util.Date ::evil)
 true
@@ -252,7 +252,7 @@ user=> (isa? Float Number)
 true
 </code>
 
-
+你可以定义多路方法，就像Java方法一样在类上进行分发。举个例子，invert多路方法，能同时工作在数字（取负数）和字符串（反转）上：
 <code>
 (defmulti invert class)
 (defmethod invert Number `[x`]
