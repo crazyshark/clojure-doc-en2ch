@@ -78,7 +78,7 @@ user=> (attack d)
 </p>
 
 ====多重分发====
-
+<p>
 
 <code>
 (defmulti encounter (fn `[x y`]
@@ -102,9 +102,10 @@ user=> (encounter b c)
 user=> (encounter d b)
 "Evil orc Drung attacks innocent elf Balfor"
 </code>
+</p>
 
 ====默认分派值====
-
+<p>
 
 <code>
 user=> (encounter a c)
@@ -134,8 +135,10 @@ user=> (encounter a c)
 (defmethod talk "other" `[creature`]
     (str (:name creature) " speaks."))
 </code>
+</p>
 
 ===层次结构===
+<p>
 
 <code>
 (derive child parent)
@@ -160,9 +163,10 @@ user=> (derive ::hero ::human)
 </code>
 
 ***img here***
+</p>
 
 ====查询层次结构====
-
+<p>
 
 <code>
 (isa? child parent)
@@ -183,9 +187,10 @@ false
 user=> (isa? ::human ::human)
 true
 </code>
-
+</p>
 
 ===多路方法的层次结构===
+<p>
 
 <code>
 (defmulti cast-spell :species)
@@ -225,9 +230,10 @@ user=> (cast-spell a)
 user=> (encounter a d)
 "Arthur is attacked by Drung"
 </code>
+</p>
 
 ====Java的层次结构====
-
+<p>
 
 <code>
 user=> (derive java.util.Date ::evil)
@@ -252,8 +258,10 @@ user=> (invert 3.14)
 -3.14
 user=> (invert
 </code>
+</p>
 
 ====更多的层次结构查询====
+<p>
 
 <code>
 (parents tag)
@@ -276,9 +284,10 @@ user=> (parents java.util.Date)
     java.io.Serializable java.lang.Comparable
     :user/evil}
 </code>
+</p>
 
 ====解决冲突====
-
+<p>
 
 <code>
 (defmulti slay :species)
@@ -330,9 +339,10 @@ user=> (remove-method slay ::magical)
 user=> (slay b)
 "Oh no! A good creature was slain!"
 </code>
+</p>
 
 ====类型标记====
-
+<p>
 
 <code>
 user=> (type (with-meta {:name "Bob"} {:type ::person}))
@@ -374,9 +384,10 @@ user=> (move b)
 user=> (move 6.022)
 "What?! Numbers don't move!"
 </code>
+</p>
 
 ===用户定义的层次结构===
-
+<p>
 
 <code>
 user=> (def h (make-hierarchy))
@@ -404,6 +415,7 @@ user=> (alter-var-root (var h) derive :child :parent)
 user=> (isa? h :child :parent)
 true
 </code>
+</p>
 
 ===总结===
 <p>
