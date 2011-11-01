@@ -30,6 +30,9 @@ Clojure 多路方法更为灵活。它支持多重分派，任何变量都能把
 </code>
 </p>
 
+<p>
+将名称空间限定的关键字用于物种（::human代替:human），这个后面详述起重要性。（第七章有关于限定关键字的解释）<br/>
+现在你可以定义一个区分不同物种生物的多路方法。例如，你能够给每个物种不同的移动方式。
 <code>
 (defmulti move :species)
 
@@ -42,6 +45,7 @@ Clojure 多路方法更为灵活。它支持多重分派，任何变量都能把
  (defmethod move ::orc `[creature`]
     (str (:name creature) " stomps heavily."))
 </code>
+</p>
 
 当你调用***move***的时候，适当的方法会被调用。
 <code>
