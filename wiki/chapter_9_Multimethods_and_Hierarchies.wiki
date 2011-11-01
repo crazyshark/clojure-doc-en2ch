@@ -167,17 +167,17 @@ user=> (derive ::hero ::human)
 </code>
 
 我们创建了如附表9-1所示的关系图。
-***img here***[figure-9-1.jpg]
+***figure-9-1.jpg here***
 </p>
 
 ====查询层次结构====
 <p>
-
+一旦你定义好这些关系，你就可以用***isa?***方法来查询它们：
 <code>
 (isa? child parent)
 </code>
 
-
+当子派生于（直接或者间接地）亲的时候，***isa?***返回***true***。如一下代码所示：
 <code>
 user=> (isa? ::orc ::good)
 false
@@ -187,7 +187,7 @@ user=> (isa? ::hero ::magical)
 false
 </code>
 
-
+当子和亲相同（由Clojure的=函数定义）的时候，***isa?***同样会返回***true***：
 <code>
 user=> (isa? ::human ::human)
 true
