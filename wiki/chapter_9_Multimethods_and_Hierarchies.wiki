@@ -115,20 +115,20 @@ No method in multimethod 'encounter'
 for dispatch value: `[:user/human :user/elf`]
 </code>
 
-
+或者你能保证定义对所有可能的组合都可用的方法，或者你以关键字***:default***为分发值提供一个默认实现。
 <code>
 (defmethod encounter :default `[x y`]
     (str (:name x) " and " (:name y)
         " ignore each other."))
 </code>
 
-
+默认方法将在没有其他方法匹配得上的时候被调用：
 <code>
 user=> (encounter a c)
 "Arthur and Calis ignore each other."
 </code>
 
-
+你可以像下面这样，给***defmulti***增加一个***:default***选项来提供一个可选的默认分发值：
 <code>
 (defmulti talk :species :default "other")
 (defmethod talk ::orc `[creature`]
