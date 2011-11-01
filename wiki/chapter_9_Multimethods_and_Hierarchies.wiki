@@ -107,7 +107,7 @@ user=> (encounter d b)
 
 ====默认分派值====
 <p>
-
+注意你并没有为所有物种的组合都定义***encounter***方法。如果你试图用一个未知的组合调用***encounter***，将会报错：
 <code>
 user=> (encounter a c)
 java.lang.IllegalArgumentException:
