@@ -17,9 +17,7 @@ Clojure 多路方法更为灵活。它支持多重分派，任何变量都能把
 (defmulti name dispatch-fn)
 (defmethod multifn dispatch-value `[args...`] & body)
 </code>
-</p>
 
-<p>
 多路方法的调用和普通方法是一样的。当你调用它的时候，分发函数被赋予和多路方法相同的参数立即被调用。分发函数返回的值叫做分发值。然后Clojure搜索分发值对应的方法（由defmethod定义）。<br/>
 假设你在写一个幻想类角色扮演游戏，里面有不同种类的生物：人类、精灵、兽人、等等。每个生物用一个map描述，如下：
 <code>
@@ -28,9 +26,7 @@ Clojure 多路方法更为灵活。它支持多重分派，任何变量都能把
 (def c {:name "Calis", :species ::elf, :strength 5})
 (def d {:name "Drung", :species ::orc, :strength 6})
 </code>
-</p>
 
-<p>
 将名称空间限定的关键字用于物种（::human代替:human），这个后面详述起重要性。（第七章有关于限定关键字的解释）<br/>
 现在你可以定义一个区分不同物种生物的多路方法。例如，你能够给每个物种不同的移动方式。
 <code>
@@ -45,7 +41,6 @@ Clojure 多路方法更为灵活。它支持多重分派，任何变量都能把
  (defmethod move ::orc `[creature`]
     (str (:name creature) " stomps heavily."))
 </code>
-</p>
 
 当你调用***move***的时候，适当的方法会被调用。
 <code>
@@ -57,7 +52,9 @@ user=> (move c)
 "Calis runs swiftly."
 </code>
 
-
+发生了什么？当你调用（move a），首先Clojure为定义于关键字:species上的move多路方法调用分发方法。那个关键字，会被用于从map中找到一个对应值。所以（move a）调用（:space a），返回::human。然后Clojure会为move找到一个分发值为::human的方法，调用它。<br/>
+相同的行为可以被有条件地实现。多路方法的优点是你能在任何时候添加新方法。当你增加一个新物种生物的时候，你可以简单的定义另一个move方法，而不用修改以后的代码。<br/>
+分发方法可不是只能使用简单的关键字；任何函数都是可以的。例如，你能让分发方法按照力量对生物分类。
 <code>
 (defmulti attack (fn `[creature`]
                     (if (> (:strength creature) 5)
@@ -78,7 +75,7 @@ user=> (attack c)
 user=> (attack d)
 "Drung attacks mightily."
 </code>
-
+</p>
 
 ====多重分发====
 
