@@ -306,7 +306,7 @@ user=> (parents java.util.Date)
     (str "A magical creature was slain!"))
 </code>
 
-
+当你干掉一个人类或者一个兽人的时候，你确定会发生什么：
 <code>
 user=> (slay a) ;; human
 "Oh no! A good creature was slain!"
@@ -314,7 +314,7 @@ user=> (slay d) ;; orc
 "A magical creature was slain!"
 </code>
 
-
+但是如果你干掉一个精灵呢？
 <code>
 user=> (slay b)
 java.lang.IllegalArgumentException:
@@ -323,11 +323,11 @@ dispatch value: :user/elf -> :user/magical
 and :user/good, and neither is preferred
 </code>
 
-
+从这个异常中发现，::elf同时派生自::magical和::good，而它们都有slay方法。<br/>
+为了解决这个问题，我们必须制定分发值的匹配顺序。prefer-method方法带一个多路方法为参数，指定哪个分发值比别的占优：
 <code>
 (prefer-method multimethod preferred-value other-value)
 </code>
-
 
 <code>
 user=> (prefer-method slay ::good ::magical)
@@ -335,11 +335,10 @@ user=> (slay b)
 "Oh no! A good creature was slain!"
 </code>
 
-
+第二种解决办法（其实不能算作一种解决方案），简单地移除其中一个冲突的方法。remove-method方法带一个多路方法为参数和一个分发值，它会删除该分发值对应的方法。
 <code>
 (remove-method multimethod dispatch-value)
 </code>
-
 
 <code>
 user=> (remove-method slay ::magical)
