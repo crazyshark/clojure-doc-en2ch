@@ -196,7 +196,7 @@ true
 
 ===多路方法的层次结构===
 <p>
-
+当多路方法在查找正确的方法调用的时候，它会使用***isa?***方法比较分发值。也就是说多路方法不仅能够对显式的类型进行分发，对派生也同样有效。这是一个只作用于魔法生物的多路方法：
 <code>
 (defmulti cast-spell :species)
 
@@ -212,7 +212,7 @@ user=> (cast-spell a)
 "No, Arthur is not magical!"
 </code>
 
-
+当分发值是一个vector的时候，多路方法用***isa?***从左到右比较vector的每一个元素，多参数组合分发到层级结构。例如，你可以基于好、坏生物，重新定义你的multimethod多路方法。
 <code>
 (defmulti encounter (fn `[x y`]
                         `[(:species x) (:species y)`]))
