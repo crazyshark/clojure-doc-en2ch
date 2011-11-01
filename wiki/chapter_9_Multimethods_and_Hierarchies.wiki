@@ -155,18 +155,19 @@ user=> (derive ::elf ::good)
 user=> (derive ::orc ::evil)
 </code>
 
-
+精灵和兽人是魔法生物：
 <code>
 user=> (derive ::elf ::magical)
 user=> (derive ::orc ::magical)
 </code>
 
-
+为了添加点儿乐趣，再增加一种特殊的人类，英雄：
 <code>
 user=> (derive ::hero ::human)
 </code>
 
-***img here***
+我们创建了如附表9-1所示的关系图。
+***img here***[figure-9-1.jpg]
 </p>
 
 ====查询层次结构====
