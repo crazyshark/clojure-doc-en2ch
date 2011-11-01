@@ -394,7 +394,9 @@ user=> (move 6.022)
 
 ===用户定义的层次结构===
 <p>
-
+除全局层次结构之外，你还可以创建你自己的独立的层次构。makehierarchy方法返回一个新的曾次结构（也就是一个亲、子关系的map）。derive、isa?、parents、ancestors和descendants方法都接受一个附加的first参数，指定使用的层次机构。<br/>
+不同于全局层次机构，用户定义的层次机构允许使用非限定（没有名称空间）的关键字或者符号作为标签。<br/>
+注意使用derive创建用户自定义层次机构时，有些许的不同。使用两个参数调用时，derive修改全局层次结构。但是用户定义的层次机构是不可变的，就像Clojure其他的数据结构一样，所以3参数版本的derive返回修改之后的层次结构。如下例所示：
 <code>
 user=> (def h (make-hierarchy))
 user=> (derive h :child :parent)
@@ -402,7 +404,7 @@ user=> (isa? h :child :parent)
 false
 </code>
 
-
+因此构建用户自定义层次机构的过程，必须跟derive语句串起来，就像下面例子里那样：
 <code>
 user=> (def h (-> (make-hierarchy)
                 (derive :one :base)
@@ -412,7 +414,7 @@ user=> (isa? h :three :base)
 true
 </code>
 
-
+或者使用一个Clojure的可变类型的引用，像是Var：
 <code>
 user=> (def h (make-hierarchy))
 user=> (isa? h :child :parent)
@@ -421,6 +423,8 @@ user=> (alter-var-root (var h) derive :child :parent)
 user=> (isa? h :child :parent)
 true
 </code>
+
+默认，多路方法使用全局层次结构。defmulti接受一个可选参数:hierarchy，后跟一个将要使用的不同的层次结构。
 </p>
 
 ===总结===
