@@ -295,7 +295,8 @@ user=> (parents java.util.Date)
 注意java.util.Date的祖先，包括Java类层次结构定义的和***derive***定义的。
 ====解决冲突====
 <p>
-
+因为Clojure的层级结构允许多继承，所以当多路方法有多个合法的选项的时候就会产生问题。Clojure不知道选择哪个，所以就会抛出异常。<br/>
+举个例子，考虑在你的幻想游戏中，一个多路方法同时有分发值***::good***和***::magical***：
 <code>
 (defmulti slay :species)
 
