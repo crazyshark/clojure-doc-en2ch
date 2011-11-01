@@ -147,7 +147,8 @@ Clojure定义一个叫做“global”的层次，我们把它描述为第一个�
 (derive child parent)
 </code>
 
-
+derive在亲和子之间创建一个IS-A关系。亲和子以标签的形式被引用，因为它们被用于标识类型或者类别。标签可以是关键字或者符号，而且（在global层次）必须是名称空间限定（参考第7章）的。<br/>
+继续说幻想游戏，你可以定义生物的类型用于共享特定的属性。例如，人类和精灵都是好的而兽人是坏的：
 <code>
 user=> (derive ::human ::good)
 user=> (derive ::elf ::good)
