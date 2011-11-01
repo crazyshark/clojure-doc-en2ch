@@ -349,7 +349,7 @@ user=> (slay b)
 
 ====类型标记====
 <p>
-
+***type***方法是***class***的一个通用的版本。***type***查找并返回关于它的参数的***:type***元数据（参考第8章）。如果那个对象没有***:type***元数据，或者不支持元数据，那么会返回对象所属的类：
 <code>
 user=> (type (with-meta {:name "Bob"} {:type ::person}))
 :user/person
@@ -359,7 +359,7 @@ user=> (type {:name "Alice"})
 clojure.lang.PersistentArrayMap
 </code>
 
-
+如果你用***:type***元数据重新定义游戏中的生物种族：
 <code>
 (def a (with-meta {:name "Arthur", :strength 8}
         {:type ::human}))
@@ -367,7 +367,7 @@ clojure.lang.PersistentArrayMap
         {:type ::elf}))
 </code>
 
-
+你就可以重新定义***move***多路方法，以类型来分发：
 <code>
 (defmulti move type)
 
@@ -378,7 +378,7 @@ clojure.lang.PersistentArrayMap
     (str (:name creature) " walks steadily."))
 </code>
 
-
+这就使得***move***多路方法能够同时处理元数据可用的Clojure的数据结构和原生的Java对象：
 <code>
 (defmethod move Number `[n`]
     (str "What?! Numbers don't move!"))
