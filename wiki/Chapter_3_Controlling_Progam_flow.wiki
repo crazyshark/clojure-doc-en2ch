@@ -307,7 +307,72 @@ user=> (pow 5 3)
           sum 
           (add-up limit (+ 1 current) (+ current sum))))) 
 }}}
-...
+它可以通过递归的规则正常工作，它将到当前为止所有数的总和，以及界限值已参数传递到下一个迭代。然后每次迭代都会判断一个基本情况（当前数字是不是已经大于界限值），以及都每次迭代都会使当前数字越来越靠近界限值。这样的函数对处理当数字不大的时候是没有问题的：
+{{{
+user=> (add-up 3) 
+6 
+user=> (add-up 500)
+125250
+}}}
+但是你用它去计算一个很大的数的话，它就会挂掉：
+{{{
+user=> (add-up 5000) 
+java.lang.StackOverflowError
+}}}
+现在你就需要使用尾递归优化了，重新定义一下函数，直接用* recur *替换掉* adds-up *来调用就行了，就像清单3-4一样。
+清单3-4，正确使用用尾递归添加数字
+{{{
+(defn add-up 
+    "adds all the numbers up to a limit" 
+    ([limit] (add-up limit 0 0 )) 
+    ([limit current sum] 
+        (if (< limit current) 
+          sum 
+          (recur limit (+ 1 current) (+ current sum)))))
+}}}
+现在你可以再试试：
+{{{
+user=> (add-up 5000) 
+12502500
+}}}
+使用* recur *，运行无问题，无论有多少递归它都可以顺利执行，只要你愿意等。
+Note：Clojure因为有些地方没有默认的使用尾递归优化而遭受抨击。但是有些情况也是有可能不需要用* recur *。尽管* recur *这个发明限制了JVM自动尾递归优化，但是很多Clojure社区成员发现，显示的使用尾递归比隐式的使用个清晰和方便。在Clojure中，你可以很容易地告诉别人这个函数有没有使用尾递归，而且还可以防止出现一个错误。如果有些地方使用* recur *，它会保证程序在递归过程中不会出现内存溢出。如果你在不合适的地方使用尾递归，编译器会报出信息。这样你就再也不用去考虑什么地方该用尾递归什么地方不该用。
+
+===使用循环（Using loop）===
+特殊形式* loop *，* loop *与* recur *结合使用，当定义一个函数并立即要使用的时候，*  loop *会更简单。理论上，* loop *跟匿名函数的递归是没什么区别的，但是它使得匿名函数的递归更容易阅读，可以看到它是怎样循环的，其实尾递归也是一样。
+用* loop *形式定义一个循环体。依次有两个形式：第一个，一个初始化参数绑定的vector（name/value 的形式）,第二个就是函数体的表达式，每当* recur *在里面被使用时，它就会递归调用这个循环，并且将任何传递的参数重新绑定到之前定义的参数名上。
+举个例子，下面是一个非常简单的循环，初始化将0与符号i绑定，每次迭代都加上一个增量，当i等于10就返回。
+{{{
+(loop [i 0] 
+    (if (= i 10) 
+        i 
+        (recur (+ i 1))))
+}}}
+记住一点，像任何这样的递归函数，函数体内就必须有一个基本条件（when i = 10），而且每一次迭代都必须使进程向基本条件靠近。与递归函数不同，当没有任何需求去定义一个函数时，* loop *可以设立一个函数，并初始化参数，而且提供一个* recur *递归时回调点。你同样可以看作一个递归调用。
+当* recur *与* loop *结合使用的时候，有一点是非常有用的。在其他函数语言中有个很普遍的习惯，那就是写递归函数的时候函数体内一般会有两个实现，一个是递归，一个不是。
+典型的情况：不是递归的那个一般是用于初始化值，并调用递归。这是良好递归风格的自然结果——递归函数可能需要多个参数来保持跟踪它的计算状态，但是又不需要总是去调用这个函数本身。* loop *提供的功能能使其变得更简洁。来看一个例子，这是从前面的求平方根的函数演变过来的（用* recur *替换了直接的递归调用）
+{{{
+(defn sqrt 
+    "returns the square root of the supplied number" 
+    ([number] (sqrt number 1.0)) 
+    ([number guess] 
+    (if (good-enough? number guess) 
+        guess 
+        (recur number (avg guess (/ number guess))))))
+}}}
+注意这个函数的两个实现——没有递归的版本用来初始化* guess *的值，然后再启用递归。
+其实你可以用* loop *来重构着两步，只需一步：
+{{{
+(defn loop-sqrt 
+    "returns the square root of the supplied number" 
+    [number] 
+    (loop [guess 1.0] 
+        (if (good-enough? number guess) 
+            guess 
+            (recur (avg guess (/ number guess))))))
+}}}
+这个版本的函数就只有一个实现了，* loop *一设置* guess *的初始值就立刻执行其函数体。当* recur *被调用时，函数又会调用loop语句，不会调用整个函数的顶层。传到* recur *里面的参数都在* loop *里面匹配好，所以每次迭代的* guess *都已经在* loop *绑定了新值。这以为着代码的循环部分整洁的包装在* loop *与* recur *之间。
+
 
 ==函数式编程技术(Functional Programming Techniques)==
 
