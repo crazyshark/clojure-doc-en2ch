@@ -436,4 +436,4 @@ true
 
 
 ==译者注==
-参考 [http://www.ibm.com/developerworks/cn/linux/l-r3.html 使用R编写统计程序，第3部分:可重用和面向对象编程] 面向对象的R
+参考 [http://www.ibm.com/developerworks/cn/linux/l-r3.html#N10139 使用R编写统计程序，第3部分:可重用和面向对象编程 - 面向对象的R]
