@@ -6,21 +6,21 @@
  要立即开始在Clojure编程，只需打开一个Clojure的REPL，这代表阅读、赋值、打印、循环。REPL是一个简单而强大的的方式作为创建程序交互方式以及与运行中程序进行互动。
  开始REPL，最简单的方法是直接从系统的命令行进入1。要这样做，找到你系统目录中的Clojure位置，一个包含”Clojure-1.0.0.jar”的文件，然后键入之后就可以开始Clojure：
 
-* java –jar Clojure-1.0.0.jar *
+ * java –jar Clojure-1.0.0.jar *
 
  这将启动Java虚拟机加载Clojure的环境,就在REPL开始时,你应该看到以下字样:
 
-* user=> *
+ * user=> *
 
  这表明，REPL是准备接受输入。为了写你的第一个程序，只需在提示符下键入以下内容：
 
-* user=>(println “Hello World”) *
+ * user=>(println “Hello World”) *
 
  按回车键，REPL应该显示以下：
 
-* Hello World
-nil
-user=> *
+ * Hello World
+ * nil
+ * user=> 
 
 
 = Details =
