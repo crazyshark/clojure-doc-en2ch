@@ -190,9 +190,7 @@ I'm running Clojure code from a file.
  符号名是区分大小写的，和用户定义的符号有以下限制：
 
   #可以包含任何字母数字字符，字符*, +, !, -, _, and ?.
-
   #不得以数字开头。
-
   #可能包含冒号字符：，不是在开始或结束的符号名，并可能不会重复。
 
  根据这些规则，合法符号名的例子包括符号名，symbol_name，symbol123，*symbol*, symbol! , symbol? , 和name+symbol. 非法符号名的例子123symbol, :symbol: , symbol//name, 等。
@@ -206,11 +204,8 @@ I'm running Clojure code from a file.
  Clojure的使用以下步骤解析符号：
 
   #Clojure判断，如果该符号指向一种特殊的形式。如果是这样，并相应地使用。
-
   #其次，如果Clojure的检查符号是本地的绑定。通常情况下，本地绑定这意味着它是一个函数的参数，或* let *（第3章中讨论）定义。如果它找到一个本地的值，它将使用它。请注意，这意味着，如果有一个本地定义的符号和VAR具有相同的名称，赋值的符号名，将返回本地符号的值。局部符号覆盖相同的Vars。
-
   #Clojure的搜索在全局环境中对一个var的名称的符号对应，并返回该值。
-
   #如果Clojure在前面的步骤中并未发现一个value的符号名称，就返回一个错误：java.lang.Exception: unable to resolve symbol <symbol> in this context (NO_SOURCE_FILE:0). (未能解析符号在上下文中，NO_SOURCE_FILE部分将被替换为实际的文件名，除非你是在REPL运行。)
 
 === 命名空间Namespaces ===
