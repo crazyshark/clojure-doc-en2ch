@@ -6,22 +6,34 @@
  要立即开始在Clojure编程，只需打开一个Clojure的REPL，这代表阅读、赋值、打印、循环。REPL是一个简单而强大的的方式作为创建程序交互方式以及与运行中程序进行互动。
  开始REPL，最简单的方法是直接从系统的命令行进入1。要这样做，找到你系统目录中的Clojure位置，一个包含”Clojure-1.0.0.jar”的文件，然后键入之后就可以开始Clojure：
 
- *java –jar Clojure-1.0.0.jar*
+* java –jar Clojure-1.0.0.jar*
 
  这将启动Java虚拟机加载Clojure的环境,就在REPL开始时,你应该看到以下字样:
 
- * user=> *
+* user=> *
 
  这表明，REPL是准备接受输入。为了写你的第一个程序，只需在提示符下键入以下内容：
 
- * user=>(println “Hello World”) *
+* user=>(println “Hello World”) *
 
  按回车键，REPL应该显示以下：
 
- * Hello World
- * nil
- * user=> 
+* Hello World *
+* nil *
+* user=>  *
+ 究竟在这儿发生了什么？首字母缩写的REPL本身提供了一个线索。
+ -------
+ 1这是最简单的方式使用Clojure的，但它绝不是最好的。由于你的程序扩大规模
+和复杂性，你几乎肯定会需要移动到一个更完整的Clojure的开发环境，将提供帮助文件和类路径管理，语法高亮，调试，和其他的基本特征, 和其他插件存在于 Emacs，VI，NetBeans，Eclipse，IntelliJ IDEA和其他编辑器，它们提供这些和其他的功能。
+------
+ _Read_: Clojure的读取键入的内容，（println “Hello World”），并解析它作为
+Clojure的形式，确保它是有效的Clojure的语法。
 
+ _Evaluate_:Clojure的编译器所提供的形式和赋值、求值。在这种情况下，它调用了一个println函数，一个文本参数，”Hello World”。Clojure执行函数,并按规范体系打印”Hello World”。
+ 
+ _Print_:Clojure打印的println函数是没有返回值的。在这种情况下，它是nil，(与Java的null是相同的，这意味这没有任何值，或者是”没有”[原文为”nothing”])，因为println不是一个有返回值的函数。
+
+ _Loop_: Clojure返回到输入提示，随时为您键入另一个形式。
 
 = Details =
 
