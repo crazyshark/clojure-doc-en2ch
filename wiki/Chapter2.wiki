@@ -260,9 +260,9 @@ user=> message1
  my-namespace=>
 </code>
 
- 现在，所有的XML相关的符号，已经在我的命名空间中了。（:use clojure.xml）的形式指定clojure.xml命名空间将被加载，还导入到我的命名空间中定义的符号。这也是非常有用的依赖管理，而不是要求您手动加载clojure.xml使用它之前，你可以使用*:use*指定它作为一个命名空间声明的依赖。Clojure的命名空间声明的一部分，然后加载它，如果它不是已经加载，确保它始终是您的新的命名空间内。
+ 现在，所有的XML相关的符号，已经在我的命名空间中了。（:use clojure.xml）的形式指定clojure.xml命名空间将被加载，还导入到我的命名空间中定义的符号。这也是非常有用的依赖管理，而不是要求您手动加载clojure.xml使用它之前，你可以使用* :use * 指定它作为一个命名空间声明的依赖。Clojure的命名空间声明的一部分，然后加载它，如果它不是已经加载，确保它始终是您的新的命名空间内。
 
- 除了* :use * ，Clojure的提供了另一种可以使用* ns *，* :require *。用法与:use相同，区别在于，它不仅确保必要的命名空间加载，并导入没有应用的符号。您还可以使用* :require *指定命名空间列表包括进来。在这里你包括Clojure.xml库及clojure.set：
+ 除了* :use * ，Clojure的提供了另一种可以使用* ns *，* :require *。用法与:use相同，区别在于，它不仅确保必要的命名空间加载，并导入没有应用的符号。您还可以使用* :require * 指定命名空间列表包括进来。在这里你包括Clojure.xml库及clojure.set：
 <code language="clj">
  user=> (ns my-namespace 
     (:require clojure.xml 
