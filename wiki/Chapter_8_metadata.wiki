@@ -1,0 +1,222 @@
+= 元数据(metadata) =
+
+== 在代码中描述你的数据 ==
+
+
+ 程序员经常谈论metadata,即数据的数据。metadata在不同的语境中定义是不一样的。clojure提供给对象附加metadata的机制。但是他有个特殊的定义：元数据是附加到对象的数据的映射，不影响对象的值。
+
+ 两个具有相同值和不同元数据(metadata)的对象被认为是相等的（具有相同的hash值）。但是，元数据(metadata)和其他clojure 的数据结构一样，具有不变的数据类型(immutable semantics)。当改变对象的元数据(metadata)会生成一个新的对象，新生成的对象与原始的对象有相同的值（相同的hash值）。
+ 
+ 当改变一个值时，有些操作会改变metadata,有些不会，这章会重点讨论。
+
+== 读写metadata(Reading and Writing Metadata) ==
+
+ 默认环境中，REPL是不会打印了metadata的。需要将*\*print-meta\**设置成true，为后边示例:: 
+
+{{{	
+	(set! \*print-meta\* true)
+}}}
+
+ 你可以用*with-meta*函数给clojure里的符号(symbol)或内建的数据结构附加元数据（metadata）,用meta函数获取元数据(metadata)。::
+
+{{{
+    (with-meta obj meta-map)
+    (meta obj)
+}}}
+
+ with-meta函数会生成新对象，对象的值是*obj*,元数据(metadata)是*meta-map*,*meta* 函数返回对象obj的元数据map(不知怎么翻译好metadata map)。
+例如下面的代码 :: 
+
+{{{    
+    user=> (with-meta [1 2] {:about "A vector"})
+    #^{:about "A vector"} [1 2]
+}}}
+
+你也可以用*vary-meta*对象的元数据map(metadata map):: 
+
+{{{    
+    (vary-meta obj function & args)
+}}}
+
+ vary-meta 接收一个带有任意参数的函数并应用到对象当前的元数据map(metadata map)。它会返回一个更新了元数据（metadata）的新对象。
+例如：下面的代码 ::
+
+{{{
+    user=> (def x (with-meta [3 4] {:help "Small vector"}))
+    user=> x
+    #^{:help "Small vector"} [3 4]
+    user=> (vary-meta x assoc :help "Tiny vector")
+    #^{:help "Tiny vector"} [3 4]
+}}}
+
+ 注意两个具有相同值不同元数据的对象的相等的。（可以用clojure里的"="函数测试，但是，在内存中不是同一对象（可以clojure里的identical?函数测试）::
+
+{{{
+    user=> (def v [1 2 3])
+    user=> (= v (with-meta v {:x 1}))
+    true
+    user=> (identical? v (with-meta v {:x 1}))
+    false
+}}}
+
+ 记住，你只能在clojure里的一些特殊类型添加元数据(metadata),比如列表(list),向量(vector),符号(symbol) (functions in Clojure 1.2)。
+ java类，像String和Number,是不支持的。  
+
+== metadata保存操作(Metadata-Preserving Operations) ==
+
+ 一些操作"改变”不变的数据结构时会存储它的元数据（metadata），有些则不会。
+例如，*conj*函数操作列表时会存储它元数据（metadata），但是是*cons* 函数则不会 ::
+
+{{{
+    user=> (def x (with-meta (list 1 2) {:m 1}))
+    user=> x
+    #^{:m 1} (1 2)
+    user=> (conj x 3)
+    #^{:m 1} (3 1 2)
+    user=> (cons 3 x)
+    (3 1 2) ;; 没有元数据
+}}}
+
+ 一般情况下，collection functions (conj,assoc,dissoc,and so on)支持保存元数据(metadata)，序列函数(cons,take,drop,etc.)是不支持的。
+ 但是也有一些例外，在clojure 1.0,conj函数对向量(vector)处理时是不保存元数据(metadata)(这是个bug),但是在clojure1.1 时，又支持了。
+ (The moral is this) ,总之，小心处理带有元数据的数据结构。不要假想元数据会被存储。
+
+* 注1 *
+-----
+为什么不？试想，元数据(metadata) 可以存储在全局哈希表里，允许元数据附加到任意的java对象。然而，这种设计对于性能和内存使用有很多的不足。所以没有被支持。
+-----
+
+* 警告 *
+-----
+元数据是clojure与从不同的特性。其他编程语言很少有类似的特性。当你考虑使用元数据（metadata)，要小心它代表的语义：元数据（metadata）不是对象的值的一部分。一般来说，任何与你用户应用程序相关连的数据，不应该存储在元数据中。
+-----
+
+== (Read-Time Metadata) ==
+
+ clojure的reader(第二章中有描述）允许你用*#^*reader宏给forms附加元数据(metadata)。*#^*后是要附加到后边form read的元数据map 。  
+如果\`*`print-meta\`*`是trure的话，clojure会用相同的语法打印输出。例如，你可以像这样给向量（literal vector）附加元数据。:: 
+
+{{{
+    user=> #^{:m 1} [1 2]
+    #^{:m 1} [1 2]
+}}}
+
+ 注意：*#^* 不是with-meta函数的替代者。*#^* 给literal froms附加元数据(metadata),考虑下面的代码:: 
+
+{{{
+    user=> #^{:m 1} (list 1 2)
+    (1 2) ;; 没有元数据
+}}}
+
+ 在这个例子中，*#^* reader macro给literal form (list 1 2) 附加元数据map{:m 1},
+当这个form被执行(evaluated)时 ,返回列表(1 2) 是没有元数据的。
+
+
+#^ reader macro 通常用来给符号(symbols)附加元数据(metadata),而不是数据结构。
+Special forms such as def can make use of this read-time metadata.
+
+
+ 注意 clojure 1.0提供^作为meta的简写。这种写法不是很有用。在clojure1.1和1.2时被弃用。
+
+== 变量里的metadata ==
+
+ 在clojre里最常见的使用元数据的地方是给变量添加描述信息。函数def,defn和defmacro 会给变量添加默认的元数据。
+例如，下面的代码::
+
+{{{    
+    user=> (meta (var or))
+    {:ns #<Namespace clojure.core>
+    :name or
+    :file "clojure/core.clj"
+    :line 504
+    :doc "Evaluates exprs one at a time..."
+     ([] [x] [x & next])
+    :macro true}
+}}}
+
+另外，*def* 以及同类的函数会  结合reader macro,创建变量时很方便给变量添加元数据。::
+
+{{{
+    user=> (def #^{:doc "My cool thing"} \*thing\*)
+    #'user/\*thing\*
+    user=> (:doc (meta (var \*thing\*)))
+    "My cool thing"
+}}}
+
+ clojure的*doc*宏使用一个变量的*:doc*和*:arglists*元数据打印它的元数据::
+
+{{{
+    => (doc \*thing\*)
+    -------------------------
+    user/\*thing\*
+    nil
+        My cool thing
+}}}
+
+ defn 和 defmacro forms 的定义的变量的文档字符串自动为*:doc* 元数据。defn和defmacro 也从文档字符串和参数列表接收可选的元数据map.::
+
+{{{
+    (defn name doc-string meta-map [params] ...)
+    (defmacro name doc-string meta-map [params] ...)
+}}}
+
+ clojure的全局变量使用若干个标准的元数据键。表8-1 描述 。如果你添加特定应用的元数据，要确保是有效的关键字，像 :my-app/meta,要避免
+潜在的名称冲突。 
+
+Table 8-1. 标准变量的元数据
+
+||* Metadata Key *||* Value *||* Type *||
+||:name||变量名称||符号(symbol)||
+||:ns||变量的命名间||命名空间||
+||:file||被加载的文件||字符串(String)||
+||:line||被定义的行||整型(Integer)||
+||:doc||文档字符串||字符串(String)||
+||:arglists||函数/宏参数||符号向量的列表||
+||:macro||宏的布尔值,默认false||布尔值||
+||:private||私有变量的布尔值，默认false||布尔值||
+||:tag||值或函数的返回值类型||类或符号(symbol)||
+
+=== 标签类型(type tags) ===
+
+ 元数据键*:tag* 用来给符号和变量添加描述信息。这能够帮助clojure的编译器优化生成的字节码。在15章会详细说明。
+
+=== 私有变量(private vars) ===
+
+ 在第7章中，用:private true 定义的变量的元数据的元数据是私有的。Private Vars cannot bereferred from namespaces other than the one in which they were defined宏defn- 创建私有的函数。为了创建私有的宏或者其它的变量，可以像这样添加元数据。::
+
+{{{
+    (def #^{:private true} \*my-private-var\*) ;; for Vars
+    (defmacro my-private-macro {:private true} [args] ...)
+    ;; for macros
+}}}
+
+== 引用类型里的metadata ==
+
+ clojure的可变的引用类型：变量,ref,agent,原子,命名空间都支持元数据。你可以用alter-meta! 函数改变任何引用类型的metadata map.::
+
+{{{
+    (alter-meta! iref f & args)
+}}}
+
+ alter-meta! 函数作用类似alter函数，它调用iref metadata map里的函数f,函数参数是args 。例如，你可以这样给一个存在的变量添加元数据。::
+
+{{{
+    (alter-meta! (var for) assoc :note "Not a loop!")
+    {:note "Not a loop!" :macro true, ...
+    user=> (:note (meta (var for)))
+    "Not a loop!"
+}}}
+
+ alter-meta! 是原子操作，但是，它不会像alter需要事务处理。
+
+ ref,agent,和atom函数接收:meta选项指定初始化的元数据map 。例如，下面的代码::
+
+{{{
+    user=> (def r (ref nil :meta {:about "This is my ref"}))
+    user=> (meta r)
+    {:about "This is my ref"}
+}}}
+
+== 总结 ==
+
+ 元数据(metadata)是种与种不同的特性。在日常编程中会频繁的使用。元数据在元编程应用最多，它可以用一种形式的代码生成另一种形式的代码。在某种意义上说，它起到了java注释的作用。元数据的所有功能还需要clojure程序员去探索。元数据也在clojure编译器起了重要的作用。（类型推断），在未来的clojure版本中作用会更大。
