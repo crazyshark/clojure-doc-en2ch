@@ -88,7 +88,7 @@ nil
 
  这段代码将引用除了map和set之外Clojure.core中的其他所有符号。接下来你可以定义自己的map和set，而不会与Clojure.core中原先定义的符号相冲突。
 
-*  :only*选项正好与* :exlude *相反，只有符号列表中列出的符号才会被引用到当前的命名空间中。例如：
+* :only *选项正好与* :exlude *相反，只有符号列表中列出的符号才会被引用到当前的命名空间中。例如：
 <code language="clj">
 (refer 'clojure.core :only '(println prn))
 </code>
