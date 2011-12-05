@@ -17,14 +17,14 @@
 	(set! \*print-meta\* true)
 }}}
 
- 你可以用*with-meta*函数给clojure里的符号(symbol)或内建的数据结构附加元数据（metadata）,用meta函数获取元数据(metadata)。::
+ 你可以用*with-meta *函数给clojure里的符号(symbol)或内建的数据结构附加元数据（metadata）,用meta函数获取元数据(metadata)。::
 
 {{{
     (with-meta obj meta-map)
     (meta obj)
 }}}
 
- with-meta函数会生成新对象，对象的值是*obj*,元数据(metadata)是*meta-map*,*meta* 函数返回对象obj的元数据map(不知怎么翻译好metadata map)。
+ with-meta函数会生成新对象，对象的值是* obj *,元数据(metadata)是* meta-map *,* meta * 函数返回对象obj的元数据map(不知怎么翻译好metadata map)。
 例如下面的代码 :: 
 
 {{{    
@@ -32,7 +32,7 @@
     #^{:about "A vector"} [1 2]
 }}}
 
-你也可以用*vary-meta*对象的元数据map(metadata map):: 
+你也可以用* vary-meta *对象的元数据map(metadata map):: 
 
 {{{    
     (vary-meta obj function & args)
@@ -65,7 +65,7 @@
 == metadata保存操作(Metadata-Preserving Operations) ==
 
  一些操作"改变”不变的数据结构时会存储它的元数据（metadata），有些则不会。
-例如，*conj*函数操作列表时会存储它元数据（metadata），但是是*cons* 函数则不会 ::
+例如，*conj *函数操作列表时会存储它元数据（metadata），但是是* cons * 函数则不会 ::
 
 {{{
     user=> (def x (with-meta (list 1 2) {:m 1}))
@@ -101,14 +101,14 @@
     #^{:m 1} [1 2]
 }}}
 
- 注意：*#^* 不是with-meta函数的替代者。*#^* 给literal froms附加元数据(metadata),考虑下面的代码:: 
+ 注意：*#^ * 不是with-meta函数的替代者。*#^ * 给literal froms附加元数据(metadata),考虑下面的代码:: 
 
 {{{
     user=> #^{:m 1} (list 1 2)
     (1 2) ;; 没有元数据
 }}}
 
- 在这个例子中，*#^* reader macro给literal form (list 1 2) 附加元数据map{:m 1},
+ 在这个例子中，*#^ * reader macro给literal form (list 1 2) 附加元数据map{:m 1},
 当这个form被执行(evaluated)时 ,返回列表(1 2) 是没有元数据的。
 
 
@@ -143,7 +143,7 @@ Special forms such as def can make use of this read-time metadata.
     "My cool thing"
 }}}
 
- clojure的*doc*宏使用一个变量的*:doc*和*:arglists*元数据打印它的元数据::
+ clojure的*doc *宏使用一个变量的*:doc *和*:arglists *元数据打印它的元数据::
 
 {{{
     => (doc \*thing\*)
