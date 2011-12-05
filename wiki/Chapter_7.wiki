@@ -103,11 +103,11 @@ nil
 
  这段代码讲引用Clojure.core中的所有符号，但符号Clojure.core/map在当前命名空间中以core-map启用，而Clojure.core/set则是core-set。则在你希望定义新版本的内置函数的同时希望调用旧版的函数时非常有用。
 
- 作为从其他命名空间中复制映射的替代，你可以在当前命名空间中创建一个别名。在调用*alias*之后，你可以使用local-name引用其他命名空间中的符号。命名空间的别名使用*alias*函数创建。
+ 作为从其他命名空间中复制映射的替代，你可以在当前命名空间中创建一个别名。在调用* alias *之后，你可以使用local-name引用其他命名空间中的符号。命名空间的别名使用* alias *函数创建。
 
 (alias local-name namespace-name)
 
- 参数localname和namespace name都是（引用的）名字。alias在当前命名空间创建了一个别名。在调用*alias*，你可以使用local-name引用其他命名空间中的符号，而不是原命名空间中的完整名字。例如下面的代码：
+ 参数localname和namespace name都是（引用的）名字。alias在当前命名空间创建了一个别名。在调用* alias *，你可以使用local-name引用其他命名空间中的符号，而不是原命名空间中的完整名字。例如下面的代码：
 <code language="clj">
 greetings> (alias 'set 'clojure.set)
 
@@ -120,7 +120,7 @@ greetings> (set/union #{1 3 5} #{2 3 4})
 
 == 载入其他命名空间 ==
 
-*  refer* 与 *alias* 允许你引用已存在的命名空间中的符号，但当命名空间是在其他文件中定义的该怎么办？包含其他的文件并不能加载这些命名空间。Clojure提供了一系列的函数以从其他文件中加载代码
+* refer * 与 * alias * 允许你引用已存在的命名空间中的符号，但当命名空间是在其他文件中定义的该怎么办？包含其他的文件并不能加载这些命名空间。Clojure提供了一系列的函数以从其他文件中加载代码
  
 === 从文件或流中加载 ===
 
@@ -130,7 +130,7 @@ greetings> (set/union #{1 3 5} #{2 3 4})
 (load-file name）
 </code>
 
-*  Load-file*带一个参数，并尝试去加载文件中所有的Clojure格式。文件名以一个字符串的形式给予。它包含所有的字典并由当前工作路径的上下文解释。在一个Unix类型的操作系统中，它看起来像：
+*  Load-file *带一个参数，并尝试去加载文件中所有的Clojure格式。文件名以一个字符串的形式给予。它包含所有的字典并由当前工作路径的上下文解释。在一个Unix类型的操作系统中，它看起来像：
 
 <code language="clj">
 (load-file "path/to/file.clj")
@@ -158,7 +158,7 @@ java -cp clojure.jar:/code/sources clojure.main
 
 === 命名空间名与文件名 ===
 
- Clojure命名空间与Java的包具有相似的命名惯例：它们根据小数点划分成有层次分明的组织。一个流行的惯例是在你使用你的域名来命名你的库时，你会反转域名的格式。因此当你为*www.example.com*工作时，你的命名空间可能被命名为 *com.example.one*，*com.example.two*，以此类推。
+ Clojure命名空间与Java的包具有相似的命名惯例：它们根据小数点划分成有层次分明的组织。一个流行的惯例是在你使用你的域名来命名你的库时，你会反转域名的格式。因此当你为* www.example.com *工作时，你的命名空间可能被命名为 * com.example.one *，* com.example.two *，以此类推。
 
  当要把命名空间翻译成文件名的时候，小数点(.)将变成路径的分隔符(/)而连接号(-)将变成下划线(`_`)。所以在一个Unix类型的系统，Clojure命名空间com.example.my-cool-library会被定义在文件 com/example/my`_`cool`_`library.clj中。为了加载这个命名空间，包括com的路径必须在类路径中。
 
@@ -182,7 +182,7 @@ greetings=> (load "hello")
 === 从类路径中加载命名空间 ===
 
 
- 在通常的编码中你将极少用到*load*函数，作为替代，Clojure提供了两个更高层的函数以加载命名空间，*require* 和 *use*。
+ 在通常的编码中你将极少用到* load *函数，作为替代，Clojure提供了两个更高层的函数以加载命名空间，* require * 和 * use *。
 
 <code language="clj">
 (require 'com.example.lib)
@@ -287,7 +287,7 @@ user=> (new Date)
 
 == 把它们综合起来：命名空间描述 ==
 
- 当在编写一个普通的Clojure代码时，你可能不会使用 *in-ns* ，*refer，*alias*，*load*，require*，*use*和*import*函数。作为替代，你也许会使用ns宏来添加一个命名空间描述作为你的Clojure代码的定义性开头，就像在本章开头的示例中的那样。
+ 当在编写一个普通的Clojure代码时，你可能不会使用 * in-ns * ，* refer *，* alias *，* load *，* require *，* use *和* import *函数。作为替代，你也许会使用ns宏来添加一个命名空间描述作为你的Clojure代码的定义性开头，就像在本章开头的示例中的那样。
 
 <code language="clj">
 (ns name & references)
@@ -467,12 +467,12 @@ user=> (keyword "user" "goodbye")
 === 查询命名空间 ===
 
  
- 特殊变量*ns*总是与当前命名空间绑定在一起。会被in-ns更改。
+ 特殊变量* ns *总是与当前命名空间绑定在一起。会被in-ns更改。
 
  函数all-ns没有参数，返回当前定义的所有命名空间。
 
 
-*  注意：*命名空间的集合是全局的。你不能在同一个JVM中拥有多个Clojure实例以加载不同的命名空间。因为Clojure只是一个编译器而不是像Jython或JRuby那样的解释器，所以在这里谈论Clojure的实例化并没有意义。你可以使用Java classloader来创建一个独立的可执行上下文，但是这超出了本书的讨论范围。
+*  注意： *命名空间的集合是全局的。你不能在同一个JVM中拥有多个Clojure实例以加载不同的命名空间。因为Clojure只是一个编译器而不是像Jython或JRuby那样的解释器，所以在这里谈论Clojure的实例化并没有意义。你可以使用Java classloader来创建一个独立的可执行上下文，但是这超出了本书的讨论范围。
 
 
  两个函数可以帮助你从一个命名空间对象中取得命名空间的命名符号。Find-ns函数有一个符号参数，将返回以该参数命名的命名空间。当该命名空间不存在时返回nil。
